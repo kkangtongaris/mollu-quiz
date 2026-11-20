@@ -56,10 +56,13 @@
   .hint-tile { background: #fff; border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.02); user-select: none; transition: 0.1s; display: flex; flex-direction: column; justify-content: center;}
   .hint-tile:hover { background: #f7fafc; border-color: #cbd5e0; transform: translateY(-2px); }
 
-  .hint-label { font-size: 13px; color: #718096; margin-bottom: 8px; }
+  .hint-label { font-size: 13px; color: #718096; margin-bottom: 8px; display: flex; justify-content: center; align-items: center; }
   .hint-value { font-size: 18px; font-weight: bold; color: #2d3748; }
   .hidden-text { display: none; }
   .question-mark { color: #a0aec0; font-size: 20px; font-weight: bold; }
+  
+  .help-icon { display: inline-block; cursor: pointer; color: #a0aec0; margin-left: 6px; font-size: 11px; font-weight: bold; border: 1.5px solid #cbd5e0; border-radius: 50%; width: 15px; height: 15px; line-height: 14px; text-align: center; transition: 0.2s; }
+  .help-icon:hover { background-color: #e2e8f0; color: #4a5568; border-color: #a0aec0; }
 
   .type-red { color: #e53e3e !important; }
   .type-yellow { color: #d69e2e !important; }
@@ -71,7 +74,7 @@
      4. 하단 지형 적성 패널
   ========================================= */
   .terrain-section { width: 100%; background: #fff; padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 16px; }
-  .terrain-header { font-size: 15px; font-weight: bold; color: #4a5568; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; text-align: left; padding-left: 8px; }
+  .terrain-header { font-size: 15px; font-weight: bold; color: #4a5568; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; text-align: left; padding-left: 8px; display: flex; align-items: center;}
   .terrain-tiles-container { display: flex; justify-content: space-around; align-items: center; width: 100%; }
   .terrain-tile { text-align: center; cursor: pointer; user-select: none; flex: 1; }
   .terrain-label { font-size: 14px; color: #718096; margin-bottom: 8px; font-weight: bold; }
@@ -79,7 +82,7 @@
   .terrain-tile:hover .terrain-icon { background: #e2e8f0; transform: translateY(-2px); }
 
   /* =========================================
-     5. 도움말 팝업(모달) UI
+     5. 도움말 팝업(모달) UI 및 색상 팔레트
   ========================================= */
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 100; }
   .modal-content { background: #fff; border-radius: 16px; width: 90%; max-width: 500px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; display: flex; flex-direction: column; }
@@ -97,6 +100,11 @@
   .help-page h3 { font-size: 18px; color: #3182ce; margin-top: 0; margin-bottom: 12px; }
   .help-page ul { padding-left: 20px; margin: 10px 0; }
   .help-page li { margin-bottom: 6px; }
+
+  /* 💡 추가: 색상 팔레트 스타일 */
+  .color-palette { display: flex; flex-wrap: wrap; gap: 10px 14px; margin: 16px 0; padding: 16px; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+  .color-item { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: bold; color: #4a5568; }
+  .color-box { width: 16px; height: 16px; border-radius: 4px; border: 1px solid #cbd5e0; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); }
   
   .modal-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
   .page-btn { padding: 8px 16px; border: 1px solid #e2e8f0; border-radius: 20px; background: #fff; cursor: pointer; font-weight: bold; color: #4a5568; transition: 0.2s; }
@@ -113,7 +121,7 @@
   <div class="header">
     <div class="header-title">몰루 퀴즈</div>
     <div class="header-buttons">
-      <button onclick="openHelpModal()">도움말</button>
+      <button onclick="openHelpPage(1)">도움말</button>
       <button class="btn-giveup" onclick="showAnswer()">정답 보기</button>
     </div>
   </div>
@@ -141,21 +149,21 @@
 
     <!-- 오른쪽 패널 -->
     <div class="right-panel">
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">신장 (키)</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-height"></span></div></div>
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">생일</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-birthMonth"></span></div></div>
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">나이</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-age"></span></div></div>
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">학년</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-grade"></span></div></div>
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">머리색</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-hairColor"></span></div></div>
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">현상수배</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-bounty"></span></div></div>
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">무기 종류</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-weapon"></span></div></div>
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">사거리</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-range"></span></div></div>
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">역할군</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-role"></span></div></div>
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">편성 타입</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-squadType"></span></div></div>
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">공격 타입</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-attackType"></span></div></div>
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">방어 타입</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-defenseType"></span></div></div>
-      <div class="hint-tile" onclick="revealHint(this)"><div class="hint-label">이격 개수</div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-versions"></span></div></div>
-      <div class="hint-tile" onclick="playAudioHint(this)">
-        <div class="hint-label">타이틀콜(일음)</div>
+      <div class="hint-tile" onclick="revealHint(this, 1)"><div class="hint-label">신장 (키) <span class="help-icon" onclick="openHelpPage(2, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-height"></span></div></div>
+      <div class="hint-tile" onclick="revealHint(this, 1)"><div class="hint-label">생일 <span class="help-icon" onclick="openHelpPage(2, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-birthMonth"></span></div></div>
+      <div class="hint-tile" onclick="revealHint(this, 1)"><div class="hint-label">나이 <span class="help-icon" onclick="openHelpPage(2, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-age"></span></div></div>
+      <div class="hint-tile" onclick="revealHint(this, 1)"><div class="hint-label">학년 <span class="help-icon" onclick="openHelpPage(2, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-grade"></span></div></div>
+      <div class="hint-tile" onclick="revealHint(this, 1)"><div class="hint-label">머리색 <span class="help-icon" onclick="openHelpPage(3, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-hairColor"></span></div></div>
+      <div class="hint-tile" onclick="revealHint(this, 3)"><div class="hint-label">소속 학원 <span class="help-icon" onclick="openHelpPage(4, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-school" style="font-size: 16px;"></span></div></div>
+      <div class="hint-tile" onclick="revealHint(this, 1)"><div class="hint-label">무기 종류 <span class="help-icon" onclick="openHelpPage(5, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-weapon"></span></div></div>
+      <div class="hint-tile" onclick="revealHint(this, 1)"><div class="hint-label">사거리 <span class="help-icon" onclick="openHelpPage(6, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-range"></span></div></div>
+      <div class="hint-tile" onclick="revealHint(this, 1)"><div class="hint-label">역할군 <span class="help-icon" onclick="openHelpPage(6, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-role"></span></div></div>
+      <div class="hint-tile" onclick="revealHint(this, 1)"><div class="hint-label">편성 타입 <span class="help-icon" onclick="openHelpPage(6, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-squadType"></span></div></div>
+      <div class="hint-tile" onclick="revealHint(this, 1)"><div class="hint-label">공격 타입 <span class="help-icon" onclick="openHelpPage(6, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-attackType"></span></div></div>
+      <div class="hint-tile" onclick="revealHint(this, 1)"><div class="hint-label">방어 타입 <span class="help-icon" onclick="openHelpPage(6, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-defenseType"></span></div></div>
+      <div class="hint-tile" onclick="revealHint(this, 1)"><div class="hint-label">이격 개수 <span class="help-icon" onclick="openHelpPage(7, event)">?</span></div><div class="hint-value"><span class="question-mark">?</span><span class="hidden-text" id="hint-versions"></span></div></div>
+      <div class="hint-tile" onclick="playAudioHint(this, 5)">
+        <div class="hint-label">타이틀콜(일음) <span class="help-icon" onclick="openHelpPage(8, event)">?</span></div>
         <div class="hint-value">
           <span class="question-mark">?</span>
           <span class="hidden-text" style="font-size:16px;">🔊 음성 재생</span>
@@ -164,11 +172,10 @@
       </div>
     </div>
 
-    <!-- 💡 수정: 한 번에 모두 열리는 지형 패널 -->
+    <!-- 하단 지형 패널 -->
     <div class="terrain-section">
-      <div class="terrain-header">지형 적성</div>
+      <div class="terrain-header">지형 적성 <span class="help-icon" onclick="openHelpPage(9, event)" style="margin-left: 8px;">?</span></div>
       <div class="terrain-tiles-container">
-        <!-- 이제 각 타일 클릭 시 revealTerrainHints()를 호출하여 한 번에 모두 개방 -->
         <div class="terrain-tile" onclick="revealTerrainHints()">
           <div class="terrain-label">시가전</div><div class="terrain-icon"><span class="question-mark">?</span><span class="hidden-text" id="hint-urban"></span></div>
         </div>
@@ -180,10 +187,18 @@
         </div>
       </div>
     </div>
+
+  </div>
+
+  <!-- 메인 화면 하단 크레딧 -->
+  <div style="text-align: center; margin-top: 20px; font-size: 13px; color: #a0aec0; line-height: 1.6;">
+    <strong>Inspiration</strong>: <a href="https://pokequiz.kr/" target="_blank" style="color: #3182ce; text-decoration: none;">포케퀴즈(PokeQuiz)</a><br>
+    <strong>Data & Assets</strong>: <a href="https://schaledb.com/" target="_blank" style="color: #a0aec0; text-decoration: none;">Schale DB</a> | <strong>Code Assistant</strong>: Google Gemini<br>
+    © Nexon Games & Yostar
   </div>
 </div>
 
-<!-- 도움말 모달 UI (총 10페이지) -->
+<!-- 도움말 모달 UI -->
 <div class="modal-overlay" id="helpModal" onclick="closeHelpModalOnBg(event)">
   <div class="modal-content">
     <div class="modal-header">
@@ -196,8 +211,8 @@
       <div class="help-page active" id="page1">
         <h3>게임 소개</h3>
         가려진 상태의 패널을 하나씩 열어보며, 정답인 블루아카이브 학생을 맞혀보세요.<br><br>
-        힌트를 적게 열고 오답을 적게 입력할수록 높은 등급의 트로피를 받습니다. (힌트 1개 개방 또는 오답 입력 시 카운트 1 증가)
-        <ul>
+        힌트를 적게 열고 오답을 적게 입력할수록 높은 등급의 트로피를 받습니다. (기본 힌트/오답은 카운트가 1 증가합니다.)
+        <ul style="margin-top: 12px;">
           <li>7개 이하: <span style="color:#a855f7; font-weight:bold;">플래티넘</span></li>
           <li>9개 이하: <span style="color:#d69e2e; font-weight:bold;">골드</span></li>
           <li>11개 이하: <span style="color:#718096; font-weight:bold;">실버</span></li>
@@ -210,33 +225,47 @@
         <h3>기본 인적 사항</h3>
         학생의 신장(키), 생일, 나이, 학년 정보를 제공합니다.<br><br>
         <strong>※ 난이도 조절 안내</strong><br>
-        너무 쉽게 유추되는 것을 방지하기 위해, 신장은 십의 자리까지만(예: 156cm → 15X), 생일은 태어난 월(예: 7월)까지만 제공됩니다.
+        난이도 조절을 위해, 신장은 십의 자리까지만(예: 156cm → 15X), 생일은 태어난 월(예: 7월)까지만 제공됩니다.
       </div>
       
-      <!-- 3페이지 -->
+      <!-- 💡 3페이지 (팔레트 UI 추가) -->
       <div class="help-page" id="page3">
         <h3>머리색</h3>
-        해당 학생의 일러스트 기준 머리색 힌트를 제공합니다.<br><br>
-        <span style="color:#e53e3e;">※ 현재 데이터 추가 예정입니다!</span><br>
-        데이터 업데이트 전까지는 클릭해도 '비밀' 혹은 빈칸으로 표시되니 당분간은 힌트를 낭비하지 않도록 클릭에 주의해 주세요.
+        학생의 머리색은 아래와 같이 직관적인 색상으로 분류됩니다.<br>
+        
+        <!-- 컬러 팔레트 영역 -->
+        <div class="color-palette">
+          <div class="color-item"><div class="color-box" style="background: #e53e3e;"></div>빨강</div>
+          <div class="color-item"><div class="color-box" style="background: #f687b3;"></div>분홍</div>
+          <div class="color-item"><div class="color-box" style="background: #a0aec0;"></div>회색</div>
+          <div class="color-item"><div class="color-box" style="background: #ffffff;"></div>흰색</div>
+          <div class="color-item"><div class="color-box" style="background: #ed8936;"></div>주황</div>
+          <div class="color-item"><div class="color-box" style="background: #2d3748;"></div>검정</div>
+          <div class="color-item"><div class="color-box" style="background: #3182ce;"></div>파랑</div>
+          <div class="color-item"><div class="color-box" style="background: #975a16;"></div>갈색</div>
+          <div class="color-item"><div class="color-box" style="background: #ecc94b;"></div>노랑</div>
+          <div class="color-item"><div class="color-box" style="background: #9f7aea;"></div>보라</div>
+          <div class="color-item"><div class="color-box" style="background: #63b3ed;"></div>하늘</div>
+          <div class="color-item"><div class="color-box" style="background: #48bb78;"></div>초록</div>
+        </div>
+
+        투톤이거나 오묘한 색상의 경우 <strong>가장 면적이 넓은 주관적인 대표색</strong>에 가깝게 분류하였으므로 너무 과신하지 않도록 주의해 주세요.<br><br>
+        <strong>[분류 예시]</strong><br>
+        아루(빨강), 에이미(분홍), 하루나(회색), 아즈사(흰색), 네루(주황), 아리스(검정), 유우카(파랑), 아스나(갈색), 히후미(노랑), 아츠코(보라), 치세(하늘), 메루(초록)<br>
+        *투톤 예시: 카즈사(검정)
       </div>
 
       <!-- 4페이지 -->
       <div class="help-page" id="page4">
-        <h3>현상수배 (기술 노트)</h3>
-        학생을 육성할 때 소모되는 '기술 노트'를 드랍하는 메인 현상수배 지역입니다.
-        <ul>
-          <li><strong>고가도로:</strong> 게헨나, 산해경, 발키리, 하이랜더</li>
-          <li><strong>사막 철길:</strong> 아비도스, 트리니티, 붉은겨울, 백귀야행</li>
-          <li><strong>교실:</strong> 밀레니엄, 아리우스, SRT</li>
-          <li><strong>기타:</strong> 콜라보레이션 캐릭터 (모든 학원의 노트를 사용하거나 특정되지 않음)</li>
-        </ul>
+        <h3>소속 학원</h3>
+        해당 학생이 소속된 학원(게헨나, 트리니티 등)을 바로 보여줍니다. 콜라보레이션 캐릭터인 경우 '기타'로 표시됩니다.<br><br>
+        해당 힌트를 개방 시 <strong>사용 횟수가 3개 소모</strong>됩니다.
       </div>
 
       <!-- 5페이지 -->
       <div class="help-page" id="page5">
         <h3>무기 종류</h3>
-        학생이 사용하는 고유 무기의 베이스가 되는 종류입니다.
+        학생이 사용하는 고유 무기의 종류입니다.
         <ul>
           <li>HG (권총) / SMG (기관단총)</li>
           <li>AR (돌격소총) / SG (산탄총)</li>
@@ -249,7 +278,7 @@
       <!-- 6페이지 -->
       <div class="help-page" id="page6">
         <h3>전투 스탯</h3>
-        블루아카이브를 플레이하는 선생님이라면 익숙할 전투 정보들입니다.<br><br>
+        블루아카이브 게임 내 전투 정보들입니다.<br><br>
         사거리(수치), 역할군(딜러/탱커 등), 편성 타입(스트라이커/스페셜), 공격 타입(폭발/관통 등), 방어 타입(경장갑/중장갑 등)이 제공됩니다.
       </div>
 
@@ -258,24 +287,24 @@
         <h3>이격 개수</h3>
         원본 학생을 포함하여 현재 게임에 실장된 모든 이격(버전)의 총 개수입니다.<br><br>
         (예: 원본 시로코, 라이딩, 수영복 = 총 3개)<br><br>
-        ※ 단, 스토리 설정상 '쿠로코(시로코 테러)'나 '케이' 등은 원본 학생과 별개의 존재로 독립하여 계산합니다.
+        ※ 단, 스토리 설정상 '쿠로코'나 '케이' 등은 원본 학생과 별개의 존재로 독립하여 계산합니다.
       </div>
 
       <!-- 8페이지 -->
       <div class="help-page" id="page8">
         <h3>타이틀콜 듣기</h3>
-        게임을 실행할 때 학생이 "블루아카이브!" 하고 외치는 타이틀콜 음성을 들어볼 수 있습니다.<br><br>
-        귀를 기울여 누군지 맞혀보세요! (현재 일본어 원음만 제공됩니다.)
+        게임을 실행할 때 학생이 "블루아카이브!" 하고 외치는 일본어 음성을 들어볼 수 있습니다.<br><br>
+        해당 음성 힌트를 개방 시 <strong>사용 횟수가 5개 소모</strong>됩니다.
       </div>
 
-      <!-- 9페이지 (신규: 지형 적성 묶음 설명) -->
+      <!-- 9페이지 -->
       <div class="help-page" id="page9">
         <h3>지형 적성</h3>
         학생들의 전투 환경(시가전, 야전, 실내전)에 따른 적응력(S, A, B, C, D 등)을 보여줍니다.<br><br>
-        힌트 개방 시 가혹한 패널티를 방지하기 위해, 한 지형만 클릭해도 <strong>세 가지 지형 적성이 동시에 모두 공개</strong>되며 힌트 사용 횟수는 1회만 차감됩니다.
+        한 지형만 클릭해도 <strong>세 가지 지형 적성이 동시에 개방</strong>되며, 전체 힌트 사용 횟수는 1회만 차감됩니다.
       </div>
 
-      <!-- 10페이지 (이전 9페이지) -->
+      <!-- 10페이지 -->
       <div class="help-page" id="page10">
         <h3>정답 보기 기능</h3>
         도저히 정답을 모르겠다면 우측 상단의 <strong>[정답 보기]</strong> 버튼을 누르세요.<br><br>
@@ -293,13 +322,14 @@
 
 <script>
   // ==========================================
-  // 1. 데이터 영역
+  // 1. 데이터 영역 (JSON 덮어쓰기)
   // ==========================================
   const studentsData = [
   {
     "id": 10000,
     "name": "아루",
     "aliases": [
+      "아루",
       "아루",
       "아루"
     ],
@@ -310,13 +340,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "빨간색",
       "audioKey": "aru"
     },
     "terrain": {
@@ -331,6 +361,7 @@
     "name": "에이미",
     "aliases": [
       "에이미",
+      "에이미",
       "에이미"
     ],
     "hints": {
@@ -340,13 +371,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "분홍색",
       "audioKey": "eimi"
     },
     "terrain": {
@@ -361,6 +392,7 @@
     "name": "하루나",
     "aliases": [
       "하루나",
+      "하루나",
       "하루나"
     ],
     "hints": {
@@ -370,13 +402,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "회색",
       "audioKey": "haruna"
     },
     "terrain": {
@@ -391,6 +423,7 @@
     "name": "히후미",
     "aliases": [
       "히후미",
+      "히후미",
       "히후미"
     ],
     "hints": {
@@ -400,13 +433,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "노란색",
       "audioKey": "hihumi"
     },
     "terrain": {
@@ -421,6 +454,7 @@
     "name": "히나",
     "aliases": [
       "히나",
+      "히나",
       "히나"
     ],
     "hints": {
@@ -430,13 +464,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "MG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "흰색",
       "audioKey": "hina"
     },
     "terrain": {
@@ -451,6 +485,7 @@
     "name": "호시노",
     "aliases": [
       "호시노",
+      "호시노",
       "호시노"
     ],
     "hints": {
@@ -460,13 +495,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "분홍색",
       "audioKey": "hoshino"
     },
     "terrain": {
@@ -481,6 +516,7 @@
     "name": "이오리",
     "aliases": [
       "이오리",
+      "이오리",
       "이오리"
     ],
     "hints": {
@@ -490,13 +526,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "회색",
       "audioKey": "iori"
     },
     "terrain": {
@@ -511,6 +547,7 @@
     "name": "마키",
     "aliases": [
       "마키",
+      "마키",
       "마키"
     ],
     "hints": {
@@ -520,13 +557,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "MG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "빨간색",
       "audioKey": "maki"
     },
     "terrain": {
@@ -541,6 +578,7 @@
     "name": "네루",
     "aliases": [
       "네루",
+      "네루",
       "네루"
     ],
     "hints": {
@@ -550,13 +588,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "주황색",
       "audioKey": "neru"
     },
     "terrain": {
@@ -571,6 +609,7 @@
     "name": "이즈미",
     "aliases": [
       "이즈미",
+      "이즈미",
       "이즈미"
     ],
     "hints": {
@@ -580,13 +619,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "MG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "갈색",
       "audioKey": "izumi"
     },
     "terrain": {
@@ -601,6 +640,7 @@
     "name": "시로코",
     "aliases": [
       "시로코",
+      "시로코",
       "시로코"
     ],
     "hints": {
@@ -610,13 +650,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "회색",
       "audioKey": "shiroko"
     },
     "terrain": {
@@ -631,6 +671,7 @@
     "name": "슌",
     "aliases": [
       "슌",
+      "슌",
       "슌"
     ],
     "hints": {
@@ -640,13 +681,13 @@
       "age": "극비",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "산해경",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "shun"
     },
     "terrain": {
@@ -661,6 +702,7 @@
     "name": "스미레",
     "aliases": [
       "스미레",
+      "스미레",
       "스미레"
     ],
     "hints": {
@@ -670,13 +712,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "검은색",
       "audioKey": "sumire"
     },
     "terrain": {
@@ -691,6 +733,7 @@
     "name": "츠루기",
     "aliases": [
       "츠루기",
+      "츠루기",
       "츠루기"
     ],
     "hints": {
@@ -700,13 +743,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "검은색",
       "audioKey": "tsurugi"
     },
     "terrain": {
@@ -721,6 +764,7 @@
     "name": "이즈나",
     "aliases": [
       "이즈나",
+      "이즈나",
       "이즈나"
     ],
     "hints": {
@@ -730,13 +774,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "갈색",
       "audioKey": "izuna"
     },
     "terrain": {
@@ -751,6 +795,7 @@
     "name": "아리스",
     "aliases": [
       "아리스",
+      "아리스",
       "아리스"
     ],
     "hints": {
@@ -760,13 +805,13 @@
       "age": "??세",
       "grade": "1학년",
       "weapon": "RG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 850,
-      "hairColor": "",
+      "range": "850",
+      "hairColor": "검은색",
       "audioKey": "aris"
     },
     "terrain": {
@@ -781,6 +826,7 @@
     "name": "미도리",
     "aliases": [
       "미도리",
+      "미도리",
       "미도리"
     ],
     "hints": {
@@ -790,13 +836,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "노란색",
       "audioKey": "midori"
     },
     "terrain": {
@@ -811,6 +857,7 @@
     "name": "체리노",
     "aliases": [
       "체리노",
+      "체리노",
       "체리노"
     ],
     "hints": {
@@ -820,13 +867,13 @@
       "age": "??세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "흰색",
       "audioKey": "cherino"
     },
     "terrain": {
@@ -841,6 +888,7 @@
     "name": "유즈",
     "aliases": [
       "유즈",
+      "유즈",
       "유즈"
     ],
     "hints": {
@@ -850,13 +898,13 @@
       "age": "16세",
       "grade": "1학년",
       "weapon": "GL",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "빨간색",
       "audioKey": "yuzu"
     },
     "terrain": {
@@ -871,6 +919,7 @@
     "name": "아즈사",
     "aliases": [
       "아즈사",
+      "아즈사",
       "아즈사"
     ],
     "hints": {
@@ -880,13 +929,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "흰색",
       "audioKey": "ch0056"
     },
     "terrain": {
@@ -901,6 +950,7 @@
     "name": "코하루",
     "aliases": [
       "코하루",
+      "코하루",
       "코하루"
     ],
     "hints": {
@@ -910,13 +960,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "힐러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "분홍색",
       "audioKey": "ch0057"
     },
     "terrain": {
@@ -931,6 +981,7 @@
     "name": "아즈사(수영복)",
     "aliases": [
       "아즈사(수영복)",
+      "아즈사(수영복)",
       "아즈사"
     ],
     "hints": {
@@ -940,13 +991,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "흰색",
       "audioKey": "ch0059"
     },
     "terrain": {
@@ -961,6 +1012,7 @@
     "name": "히나(수영복)",
     "aliases": [
       "히나(수영복)",
+      "히나(수영복)",
       "히나"
     ],
     "hints": {
@@ -970,13 +1022,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "MG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "흰색",
       "audioKey": "ch0063"
     },
     "terrain": {
@@ -991,6 +1043,7 @@
     "name": "이오리(수영복)",
     "aliases": [
       "이오리(수영복)",
+      "이오리(수영복)",
       "이오리"
     ],
     "hints": {
@@ -1000,13 +1053,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "회색",
       "audioKey": "ch0064"
     },
     "terrain": {
@@ -1021,6 +1074,7 @@
     "name": "시로코(라이딩)",
     "aliases": [
       "시로코(라이딩)",
+      "시로코(라이딩)",
       "시로코"
     ],
     "hints": {
@@ -1030,13 +1084,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "회색",
       "audioKey": "ch0065"
     },
     "terrain": {
@@ -1051,6 +1105,7 @@
     "name": "슌(어린이)",
     "aliases": [
       "슌(어린이)",
+      "슌(어린이)",
       "슌"
     ],
     "hints": {
@@ -1060,13 +1115,13 @@
       "age": "극비",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "산해경",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0066"
     },
     "terrain": {
@@ -1081,6 +1136,7 @@
     "name": "네루(바니걸)",
     "aliases": [
       "네루(바니걸)",
+      "네루(바니걸)",
       "네루"
     ],
     "hints": {
@@ -1090,13 +1146,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "주황색",
       "audioKey": "ch0101"
     },
     "terrain": {
@@ -1111,6 +1167,7 @@
     "name": "카린(바니걸)",
     "aliases": [
       "카린(바니걸)",
+      "카린(바니걸)",
       "카린"
     ],
     "hints": {
@@ -1120,13 +1177,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0100"
     },
     "terrain": {
@@ -1141,6 +1198,7 @@
     "name": "아스나(바니걸)",
     "aliases": [
       "아스나(바니걸)",
+      "아스나(바니걸)",
       "아스나"
     ],
     "hints": {
@@ -1150,13 +1208,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "갈색",
       "audioKey": "ch0098"
     },
     "terrain": {
@@ -1171,6 +1229,7 @@
     "name": "나츠",
     "aliases": [
       "나츠",
+      "나츠",
       "나츠"
     ],
     "hints": {
@@ -1180,13 +1239,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "분홍색",
       "audioKey": "ch0155"
     },
     "terrain": {
@@ -1201,6 +1260,7 @@
     "name": "치나츠(온천)",
     "aliases": [
       "치나츠(온천)",
+      "치나츠(온천)",
       "치나츠"
     ],
     "hints": {
@@ -1210,13 +1270,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "갈색",
       "audioKey": "ch0163"
     },
     "terrain": {
@@ -1231,6 +1291,7 @@
     "name": "아루(새해)",
     "aliases": [
       "아루(새해)",
+      "아루(새해)",
       "아루"
     ],
     "hints": {
@@ -1240,13 +1301,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "빨간색",
       "audioKey": "ch0084"
     },
     "terrain": {
@@ -1261,6 +1322,7 @@
     "name": "무츠키(새해)",
     "aliases": [
       "무츠키(새해)",
+      "무츠키(새해)",
       "무츠키"
     ],
     "hints": {
@@ -1270,13 +1332,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "MG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "흰색",
       "audioKey": "ch0085"
     },
     "terrain": {
@@ -1291,6 +1353,7 @@
     "name": "와카모",
     "aliases": [
       "와카모",
+      "와카모",
       "와카모"
     ],
     "hints": {
@@ -1300,13 +1363,13 @@
       "age": "18세",
       "grade": "정학",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0111"
     },
     "terrain": {
@@ -1321,6 +1384,7 @@
     "name": "미모리",
     "aliases": [
       "미모리",
+      "미모리",
       "미모리"
     ],
     "hints": {
@@ -1330,13 +1394,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "분홍색",
       "audioKey": "ch0115"
     },
     "terrain": {
@@ -1351,6 +1415,7 @@
     "name": "우이",
     "aliases": [
       "우이",
+      "우이",
       "우이"
     ],
     "hints": {
@@ -1360,13 +1425,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0169"
     },
     "terrain": {
@@ -1381,6 +1446,7 @@
     "name": "히나타",
     "aliases": [
       "히나타",
+      "히나타",
       "히나타"
     ],
     "hints": {
@@ -1390,13 +1456,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "검은색",
       "audioKey": "ch0073"
     },
     "terrain": {
@@ -1411,6 +1477,7 @@
     "name": "마리나",
     "aliases": [
       "마리나",
+      "마리나",
       "마리나"
     ],
     "hints": {
@@ -1420,13 +1487,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "노란색",
       "audioKey": "ch0119"
     },
     "terrain": {
@@ -1441,6 +1508,7 @@
     "name": "미야코",
     "aliases": [
       "미야코",
+      "미야코",
       "미야코"
     ],
     "hints": {
@@ -1450,13 +1518,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "SRT",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "흰색",
       "audioKey": "ch0142"
     },
     "terrain": {
@@ -1471,6 +1539,7 @@
     "name": "미유",
     "aliases": [
       "미유",
+      "미유",
       "미유"
     ],
     "hints": {
@@ -1480,13 +1549,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "교실",
+      "school": "SRT",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0145"
     },
     "terrain": {
@@ -1501,6 +1570,7 @@
     "name": "츠쿠요",
     "aliases": [
       "츠쿠요",
+      "츠쿠요",
       "츠쿠요"
     ],
     "hints": {
@@ -1510,13 +1580,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "검은색",
       "audioKey": "ch0114"
     },
     "terrain": {
@@ -1531,6 +1601,7 @@
     "name": "미사키",
     "aliases": [
       "미사키",
+      "미사키",
       "미사키"
     ],
     "hints": {
@@ -1540,13 +1611,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "RL",
-      "bounty": "교실",
+      "school": "아리우스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 850,
-      "hairColor": "",
+      "range": "850",
+      "hairColor": "검은색",
       "audioKey": "ch0105"
     },
     "terrain": {
@@ -1561,6 +1632,7 @@
     "name": "아츠코",
     "aliases": [
       "아츠코",
+      "아츠코",
       "아츠코"
     ],
     "hints": {
@@ -1570,13 +1642,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "아리우스",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "보라색",
       "audioKey": "ch0104"
     },
     "terrain": {
@@ -1591,6 +1663,7 @@
     "name": "와카모(수영복)",
     "aliases": [
       "와카모(수영복)",
+      "와카모(수영복)",
       "와카모"
     ],
     "hints": {
@@ -1600,13 +1673,13 @@
       "age": "18세",
       "grade": "정학",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0175"
     },
     "terrain": {
@@ -1621,6 +1694,7 @@
     "name": "노노미(수영복)",
     "aliases": [
       "노노미(수영복)",
+      "노노미(수영복)",
       "노노미"
     ],
     "hints": {
@@ -1630,13 +1704,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "MG",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "노란색",
       "audioKey": "ch0092"
     },
     "terrain": {
@@ -1651,6 +1725,7 @@
     "name": "호시노(수영복)",
     "aliases": [
       "호시노(수영복)",
+      "호시노(수영복)",
       "호시노"
     ],
     "hints": {
@@ -1660,13 +1735,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "분홍색",
       "audioKey": "ch0091"
     },
     "terrain": {
@@ -1681,6 +1756,7 @@
     "name": "이즈나(수영복)",
     "aliases": [
       "이즈나(수영복)",
+      "이즈나(수영복)",
       "이즈나"
     ],
     "hints": {
@@ -1690,13 +1766,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "갈색",
       "audioKey": "ch0179"
     },
     "terrain": {
@@ -1711,6 +1787,7 @@
     "name": "치세(수영복)",
     "aliases": [
       "치세(수영복)",
+      "치세(수영복)",
       "치세"
     ],
     "hints": {
@@ -1720,13 +1797,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "GL",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "하늘색",
       "audioKey": "ch0178"
     },
     "terrain": {
@@ -1741,6 +1818,7 @@
     "name": "사오리",
     "aliases": [
       "사오리",
+      "사오리",
       "사오리"
     ],
     "hints": {
@@ -1750,13 +1828,13 @@
       "age": "17세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "아리우스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "검은색",
       "audioKey": "ch0103"
     },
     "terrain": {
@@ -1771,6 +1849,7 @@
     "name": "카즈사",
     "aliases": [
       "카즈사",
+      "카즈사",
       "카즈사"
     ],
     "hints": {
@@ -1780,13 +1859,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "MG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0075"
     },
     "terrain": {
@@ -1801,6 +1880,7 @@
     "name": "코코나",
     "aliases": [
       "코코나",
+      "코코나",
       "코코나"
     ],
     "hints": {
@@ -1810,13 +1890,13 @@
       "age": "11세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "고가도로",
+      "school": "산해경",
       "role": "힐러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "흰색",
       "audioKey": "ch0137"
     },
     "terrain": {
@@ -1831,6 +1911,7 @@
     "name": "우타하(응원단)",
     "aliases": [
       "우타하(응원단)",
+      "우타하(응원단)",
       "우타하"
     ],
     "hints": {
@@ -1840,13 +1921,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "보라색",
       "audioKey": "ch0182"
     },
     "terrain": {
@@ -1861,6 +1942,7 @@
     "name": "노아",
     "aliases": [
       "노아",
+      "노아",
       "노아"
     ],
     "hints": {
@@ -1870,13 +1952,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "흰색",
       "audioKey": "ch0095"
     },
     "terrain": {
@@ -1891,6 +1973,7 @@
     "name": "유우카(체육복)",
     "aliases": [
       "유우카(체육복)",
+      "유우카(체육복)",
       "유우카"
     ],
     "hints": {
@@ -1900,13 +1983,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "파란색",
       "audioKey": "ch0184"
     },
     "terrain": {
@@ -1921,6 +2004,7 @@
     "name": "마리(체육복)",
     "aliases": [
       "마리(체육복)",
+      "마리(체육복)",
       "마리"
     ],
     "hints": {
@@ -1930,13 +2014,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "힐러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "주황색",
       "audioKey": "ch0186"
     },
     "terrain": {
@@ -1951,6 +2035,7 @@
     "name": "시구레",
     "aliases": [
       "시구레",
+      "시구레",
       "시구레"
     ],
     "hints": {
@@ -1960,13 +2045,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "GL",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "하늘색",
       "audioKey": "ch0122"
     },
     "terrain": {
@@ -1981,6 +2066,7 @@
     "name": "세리나(크리스마스)",
     "aliases": [
       "세리나(크리스마스)",
+      "세리나(크리스마스)",
       "세리나"
     ],
     "hints": {
@@ -1990,13 +2076,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "분홍색",
       "audioKey": "ch0194"
     },
     "terrain": {
@@ -2011,6 +2097,7 @@
     "name": "하루나(새해)",
     "aliases": [
       "하루나(새해)",
+      "하루나(새해)",
       "하루나"
     ],
     "hints": {
@@ -2020,13 +2107,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "흰색",
       "audioKey": "ch0191"
     },
     "terrain": {
@@ -2041,6 +2128,7 @@
     "name": "미네",
     "aliases": [
       "미네",
+      "미네",
       "미네"
     ],
     "hints": {
@@ -2050,13 +2138,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "하늘색",
       "audioKey": "ch0152"
     },
     "terrain": {
@@ -2071,6 +2159,7 @@
     "name": "미카",
     "aliases": [
       "미카",
+      "미카",
       "미카"
     ],
     "hints": {
@@ -2080,13 +2169,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "분홍색",
       "audioKey": "ch0069"
     },
     "terrain": {
@@ -2101,6 +2190,7 @@
     "name": "메구",
     "aliases": [
       "메구",
+      "메구",
       "메구"
     ],
     "hints": {
@@ -2110,13 +2200,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "FT",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "빨간색",
       "audioKey": "ch0088"
     },
     "terrain": {
@@ -2131,6 +2221,7 @@
     "name": "사쿠라코",
     "aliases": [
       "사쿠라코",
+      "사쿠라코",
       "사쿠라코"
     ],
     "hints": {
@@ -2140,13 +2231,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "흰색",
       "audioKey": "ch0067"
     },
     "terrain": {
@@ -2161,6 +2252,7 @@
     "name": "토키",
     "aliases": [
       "토키",
+      "토키",
       "토키"
     ],
     "hints": {
@@ -2170,13 +2262,13 @@
       "age": "16세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "탄력장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "노란색",
       "audioKey": "ch0187"
     },
     "terrain": {
@@ -2191,6 +2283,7 @@
     "name": "코유키",
     "aliases": [
       "코유키",
+      "코유키",
       "코유키"
     ],
     "hints": {
@@ -2200,13 +2293,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "MG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "분홍색",
       "audioKey": "ch0198"
     },
     "terrain": {
@@ -2221,6 +2314,7 @@
     "name": "카요코(새해)",
     "aliases": [
       "카요코(새해)",
+      "카요코(새해)",
       "카요코"
     ],
     "hints": {
@@ -2230,13 +2324,13 @@
       "age": "18세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "흰색",
       "audioKey": "ch0086"
     },
     "terrain": {
@@ -2251,6 +2345,7 @@
     "name": "카호",
     "aliases": [
       "카호",
+      "카호",
       "카호"
     ],
     "hints": {
@@ -2260,13 +2355,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "노란색",
       "audioKey": "ch0107"
     },
     "terrain": {
@@ -2281,6 +2376,7 @@
     "name": "아리스(메이드)",
     "aliases": [
       "아리스(메이드)",
+      "아리스(메이드)",
       "아리스"
     ],
     "hints": {
@@ -2290,13 +2386,13 @@
       "age": "??세",
       "grade": "1학년",
       "weapon": "RG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 850,
-      "hairColor": "",
+      "range": "850",
+      "hairColor": "검은색",
       "audioKey": "ch0200"
     },
     "terrain": {
@@ -2311,6 +2407,7 @@
     "name": "토키(바니걸)",
     "aliases": [
       "토키(바니걸)",
+      "토키(바니걸)",
       "토키"
     ],
     "hints": {
@@ -2320,13 +2417,13 @@
       "age": "16세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "노란색",
       "audioKey": "ch0211"
     },
     "terrain": {
@@ -2341,6 +2438,7 @@
     "name": "레이사",
     "aliases": [
       "레이사",
+      "레이사",
       "레이사"
     ],
     "hints": {
@@ -2350,13 +2448,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "보라색",
       "audioKey": "ch0167"
     },
     "terrain": {
@@ -2371,6 +2469,7 @@
     "name": "루미",
     "aliases": [
       "루미",
+      "루미",
       "루미"
     ],
     "hints": {
@@ -2380,13 +2479,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SMG",
-      "bounty": "고가도로",
+      "school": "산해경",
       "role": "힐러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "갈색",
       "audioKey": "ch0135"
     },
     "terrain": {
@@ -2401,6 +2500,7 @@
     "name": "미나",
     "aliases": [
       "미나",
+      "미나",
       "미나"
     ],
     "hints": {
@@ -2410,13 +2510,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "산해경",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "회색",
       "audioKey": "ch0138"
     },
     "terrain": {
@@ -2431,6 +2531,7 @@
     "name": "미야코(수영복)",
     "aliases": [
       "미야코(수영복)",
+      "미야코(수영복)",
       "미야코"
     ],
     "hints": {
@@ -2440,13 +2541,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "SRT",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "흰색",
       "audioKey": "ch0215"
     },
     "terrain": {
@@ -2461,6 +2562,7 @@
     "name": "사키(수영복)",
     "aliases": [
       "사키(수영복)",
+      "사키(수영복)",
       "사키"
     ],
     "hints": {
@@ -2470,13 +2572,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "MG",
-      "bounty": "교실",
+      "school": "SRT",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "회색",
       "audioKey": "ch0217"
     },
     "terrain": {
@@ -2491,6 +2593,7 @@
     "name": "우이(수영복)",
     "aliases": [
       "우이(수영복)",
+      "우이(수영복)",
       "우이"
     ],
     "hints": {
@@ -2500,13 +2603,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "탄력장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0204"
     },
     "terrain": {
@@ -2521,6 +2624,7 @@
     "name": "하나코(수영복)",
     "aliases": [
       "하나코(수영복)",
+      "하나코(수영복)",
       "하나코"
     ],
     "hints": {
@@ -2530,13 +2634,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "분홍색",
       "audioKey": "ch0209"
     },
     "terrain": {
@@ -2551,6 +2655,7 @@
     "name": "메루",
     "aliases": [
       "메루",
+      "메루",
       "메루"
     ],
     "hints": {
@@ -2560,13 +2665,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "초록색",
       "audioKey": "ch0124"
     },
     "terrain": {
@@ -2581,6 +2686,7 @@
     "name": "코토리(응원단)",
     "aliases": [
       "코토리(응원단)",
+      "코토리(응원단)",
       "코토리"
     ],
     "hints": {
@@ -2590,13 +2696,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "MG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "노란색",
       "audioKey": "ch0185"
     },
     "terrain": {
@@ -2611,6 +2717,7 @@
     "name": "이치카",
     "aliases": [
       "이치카",
+      "이치카",
       "이치카"
     ],
     "hints": {
@@ -2620,13 +2727,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "검은색",
       "audioKey": "ch0071"
     },
     "terrain": {
@@ -2641,6 +2748,7 @@
     "name": "카스미",
     "aliases": [
       "카스미",
+      "카스미",
       "카스미"
     ],
     "hints": {
@@ -2650,13 +2758,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "중장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "갈색",
       "audioKey": "ch0089"
     },
     "terrain": {
@@ -2671,6 +2779,7 @@
     "name": "미사카 미코토",
     "aliases": [
       "미사카 미코토",
+      "미사카 미코토",
       "미사카 미코토"
     ],
     "hints": {
@@ -2680,13 +2789,13 @@
       "age": "14세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "기타",
+      "school": "토키와다이",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "주황색",
       "audioKey": "ch9998"
     },
     "terrain": {
@@ -2701,6 +2810,7 @@
     "name": "쇼쿠호 미사키",
     "aliases": [
       "쇼쿠호 미사키",
+      "쇼쿠호 미사키",
       "쇼쿠호 미사키"
     ],
     "hints": {
@@ -2710,13 +2820,13 @@
       "age": "14세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "기타",
+      "school": "토키와다이",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "노란색",
       "audioKey": "ch9997"
     },
     "terrain": {
@@ -2731,6 +2841,7 @@
     "name": "유카리",
     "aliases": [
       "유카리",
+      "유카리",
       "유카리"
     ],
     "hints": {
@@ -2740,13 +2851,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "보라색",
       "audioKey": "ch0161"
     },
     "terrain": {
@@ -2761,6 +2872,7 @@
     "name": "렌게",
     "aliases": [
       "렌게",
+      "렌게",
       "렌게"
     ],
     "hints": {
@@ -2770,13 +2882,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "빨간색",
       "audioKey": "ch0224"
     },
     "terrain": {
@@ -2791,6 +2903,7 @@
     "name": "키쿄",
     "aliases": [
       "키쿄",
+      "키쿄",
       "키쿄"
     ],
     "hints": {
@@ -2800,13 +2913,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0225"
     },
     "terrain": {
@@ -2821,6 +2934,7 @@
     "name": "코타마(캠핑)",
     "aliases": [
       "코타마(캠핑)",
+      "코타마(캠핑)",
       "코타마"
     ],
     "hints": {
@@ -2830,13 +2944,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "노란색",
       "audioKey": "ch0232"
     },
     "terrain": {
@@ -2851,6 +2965,7 @@
     "name": "하레(캠핑)",
     "aliases": [
       "하레(캠핑)",
+      "하레(캠핑)",
       "하레"
     ],
     "hints": {
@@ -2860,13 +2975,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "흰색",
       "audioKey": "ch0233"
     },
     "terrain": {
@@ -2881,6 +2996,7 @@
     "name": "히나(드레스)",
     "aliases": [
       "히나(드레스)",
+      "히나(드레스)",
       "히나"
     ],
     "hints": {
@@ -2890,13 +3006,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "MG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "탄력장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "흰색",
       "audioKey": "ch0230"
     },
     "terrain": {
@@ -2911,6 +3027,7 @@
     "name": "아코(드레스)",
     "aliases": [
       "아코(드레스)",
+      "아코(드레스)",
       "아코"
     ],
     "hints": {
@@ -2920,13 +3037,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "파란색",
       "audioKey": "ch0231"
     },
     "terrain": {
@@ -2941,6 +3058,7 @@
     "name": "카요코(드레스)",
     "aliases": [
       "카요코(드레스)",
+      "카요코(드레스)",
       "카요코"
     ],
     "hints": {
@@ -2950,13 +3068,13 @@
       "age": "18세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "흰색",
       "audioKey": "ch0239"
     },
     "terrain": {
@@ -2971,6 +3089,7 @@
     "name": "아루(드레스)",
     "aliases": [
       "아루(드레스)",
+      "아루(드레스)",
       "아루"
     ],
     "hints": {
@@ -2980,13 +3099,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "빨간색",
       "audioKey": "ch0240"
     },
     "terrain": {
@@ -3001,6 +3120,7 @@
     "name": "우미카",
     "aliases": [
       "우미카",
+      "우미카",
       "우미카"
     ],
     "hints": {
@@ -3010,13 +3130,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "회색",
       "audioKey": "ch0110"
     },
     "terrain": {
@@ -3031,6 +3151,7 @@
     "name": "카즈사(밴드)",
     "aliases": [
       "카즈사(밴드)",
+      "카즈사(밴드)",
       "카즈사"
     ],
     "hints": {
@@ -3040,13 +3161,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "MG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0250"
     },
     "terrain": {
@@ -3061,6 +3182,7 @@
     "name": "요시미(밴드)",
     "aliases": [
       "요시미(밴드)",
+      "요시미(밴드)",
       "요시미"
     ],
     "hints": {
@@ -3070,13 +3192,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "노란색",
       "audioKey": "ch0220"
     },
     "terrain": {
@@ -3091,6 +3213,7 @@
     "name": "키라라",
     "aliases": [
       "키라라",
+      "키라라",
       "키라라"
     ],
     "hints": {
@@ -3100,13 +3223,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "갈색",
       "audioKey": "ch0136"
     },
     "terrain": {
@@ -3121,6 +3244,7 @@
     "name": "모모이(메이드)",
     "aliases": [
       "모모이(메이드)",
+      "모모이(메이드)",
       "모모이"
     ],
     "hints": {
@@ -3130,13 +3254,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "노란색",
       "audioKey": "ch0201"
     },
     "terrain": {
@@ -3151,6 +3275,7 @@
     "name": "미도리(메이드)",
     "aliases": [
       "미도리(메이드)",
+      "미도리(메이드)",
       "미도리"
     ],
     "hints": {
@@ -3160,13 +3285,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "노란색",
       "audioKey": "ch0202"
     },
     "terrain": {
@@ -3181,6 +3306,7 @@
     "name": "칸나(수영복)",
     "aliases": [
       "칸나(수영복)",
+      "칸나(수영복)",
       "칸나"
     ],
     "hints": {
@@ -3190,13 +3316,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "발키리",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "노란색",
       "audioKey": "ch0260"
     },
     "terrain": {
@@ -3211,6 +3337,7 @@
     "name": "모에(수영복)",
     "aliases": [
       "모에(수영복)",
+      "모에(수영복)",
       "모에"
     ],
     "hints": {
@@ -3220,13 +3347,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "SRT",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "특수장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "갈색",
       "audioKey": "ch0216"
     },
     "terrain": {
@@ -3240,6 +3367,7 @@
     "id": 10098,
     "name": "호시노(무장) - 탱커",
     "aliases": [
+      "호시노(무장) - 탱커",
       "호시노(무장)",
       "호시노"
     ],
@@ -3250,13 +3378,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "분홍색",
       "audioKey": "ch0258_02"
     },
     "terrain": {
@@ -3270,6 +3398,7 @@
     "id": 10099,
     "name": "호시노(무장) - 딜러",
     "aliases": [
+      "호시노(무장) - 딜러",
       "호시노(무장)",
       "호시노"
     ],
@@ -3280,13 +3409,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "분홍색",
       "audioKey": "ch0258_01"
     },
     "terrain": {
@@ -3301,6 +3430,7 @@
     "name": "시로코*테러",
     "aliases": [
       "시로코*테러",
+      "시로코*테러",
       "시로코*테러"
     ],
     "hints": {
@@ -3310,13 +3440,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "회색",
       "audioKey": "ch0263"
     },
     "terrain": {
@@ -3331,6 +3461,7 @@
     "name": "사오리(수영복)",
     "aliases": [
       "사오리(수영복)",
+      "사오리(수영복)",
       "사오리"
     ],
     "hints": {
@@ -3340,13 +3471,13 @@
       "age": "17세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "아리우스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "파란색",
       "audioKey": "ch0266"
     },
     "terrain": {
@@ -3361,6 +3492,7 @@
     "name": "히요리(수영복)",
     "aliases": [
       "히요리(수영복)",
+      "히요리(수영복)",
       "히요리"
     ],
     "hints": {
@@ -3370,13 +3502,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "교실",
+      "school": "아리우스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "하늘색",
       "audioKey": "ch0269"
     },
     "terrain": {
@@ -3391,6 +3523,7 @@
     "name": "마리나(치파오)",
     "aliases": [
       "마리나(치파오)",
+      "마리나(치파오)",
       "마리나"
     ],
     "hints": {
@@ -3400,13 +3533,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "노란색",
       "audioKey": "ch0270"
     },
     "terrain": {
@@ -3421,6 +3554,7 @@
     "name": "레이죠",
     "aliases": [
       "레이죠",
+      "레이죠",
       "레이죠"
     ],
     "hints": {
@@ -3430,13 +3564,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "고가도로",
+      "school": "산해경",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "빨간색",
       "audioKey": "ch0134"
     },
     "terrain": {
@@ -3451,6 +3585,7 @@
     "name": "마리(아이돌)",
     "aliases": [
       "마리(아이돌)",
+      "마리(아이돌)",
       "마리"
     ],
     "hints": {
@@ -3460,13 +3595,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "힐러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "주황색",
       "audioKey": "ch0273"
     },
     "terrain": {
@@ -3481,6 +3616,7 @@
     "name": "사쿠라코(아이돌)",
     "aliases": [
       "사쿠라코(아이돌)",
+      "사쿠라코(아이돌)",
       "사쿠라코"
     ],
     "hints": {
@@ -3490,13 +3626,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "흰색",
       "audioKey": "ch0274"
     },
     "terrain": {
@@ -3511,6 +3647,7 @@
     "name": "치아키",
     "aliases": [
       "치아키",
+      "치아키",
       "치아키"
     ],
     "hints": {
@@ -3520,13 +3657,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "특수장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "검은색",
       "audioKey": "ch0238"
     },
     "terrain": {
@@ -3541,6 +3678,7 @@
     "name": "유우카(파자마)",
     "aliases": [
       "유우카(파자마)",
+      "유우카(파자마)",
       "유우카"
     ],
     "hints": {
@@ -3550,13 +3688,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "파란색",
       "audioKey": "ch0284"
     },
     "terrain": {
@@ -3571,6 +3709,7 @@
     "name": "노아(파자마)",
     "aliases": [
       "노아(파자마)",
+      "노아(파자마)",
       "노아"
     ],
     "hints": {
@@ -3580,13 +3719,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "흰색",
       "audioKey": "ch0285"
     },
     "terrain": {
@@ -3601,6 +3740,7 @@
     "name": "세이아",
     "aliases": [
       "세이아",
+      "세이아",
       "세이아"
     ],
     "hints": {
@@ -3610,13 +3750,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "탄력장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "노란색",
       "audioKey": "ch0070"
     },
     "terrain": {
@@ -3631,6 +3771,7 @@
     "name": "네루(교복)",
     "aliases": [
       "네루(교복)",
+      "네루(교복)",
       "네루"
     ],
     "hints": {
@@ -3640,13 +3781,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "탄력장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "주황색",
       "audioKey": "ch0280"
     },
     "terrain": {
@@ -3661,6 +3802,7 @@
     "name": "아스나(교복)",
     "aliases": [
       "아스나(교복)",
+      "아스나(교복)",
       "아스나"
     ],
     "hints": {
@@ -3670,13 +3812,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "갈색",
       "audioKey": "ch0281"
     },
     "terrain": {
@@ -3691,6 +3833,7 @@
     "name": "세나(사복)",
     "aliases": [
       "세나(사복)",
+      "세나(사복)",
       "세나"
     ],
     "hints": {
@@ -3700,13 +3843,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "GL",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "힐러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "흰색",
       "audioKey": "ch0082"
     },
     "terrain": {
@@ -3721,6 +3864,7 @@
     "name": "주리(아르바이트)",
     "aliases": [
       "주리(아르바이트)",
+      "주리(아르바이트)",
       "주리"
     ],
     "hints": {
@@ -3730,13 +3874,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "분홍색",
       "audioKey": "ch0286"
     },
     "terrain": {
@@ -3751,6 +3895,7 @@
     "name": "레이",
     "aliases": [
       "레이",
+      "레이",
       "레이"
     ],
     "hints": {
@@ -3760,13 +3905,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "RL",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "경장갑",
-      "range": 850,
-      "hairColor": "",
+      "range": "850",
+      "hairColor": "주황색",
       "audioKey": "ch0245"
     },
     "terrain": {
@@ -3781,6 +3926,7 @@
     "name": "사오리(드레스)",
     "aliases": [
       "사오리(드레스)",
+      "사오리(드레스)",
       "사오리"
     ],
     "hints": {
@@ -3790,13 +3936,13 @@
       "age": "17세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "아리우스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "검은색",
       "audioKey": "ch0259"
     },
     "terrain": {
@@ -3811,6 +3957,7 @@
     "name": "히카리",
     "aliases": [
       "히카리",
+      "히카리",
       "히카리"
     ],
     "hints": {
@@ -3820,13 +3967,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "하이랜더",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "경장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "초록색",
       "audioKey": "ch0242"
     },
     "terrain": {
@@ -3841,6 +3988,7 @@
     "name": "노조미",
     "aliases": [
       "노조미",
+      "노조미",
       "노조미"
     ],
     "hints": {
@@ -3850,13 +3998,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "하이랜더",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "경장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "초록색",
       "audioKey": "ch0243"
     },
     "terrain": {
@@ -3871,6 +4019,7 @@
     "name": "나구사",
     "aliases": [
       "나구사",
+      "나구사",
       "나구사"
     ],
     "hints": {
@@ -3880,13 +4029,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "탄력장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "흰색",
       "audioKey": "ch0222"
     },
     "terrain": {
@@ -3901,6 +4050,7 @@
     "name": "나츠(밴드)",
     "aliases": [
       "나츠(밴드)",
+      "나츠(밴드)",
       "나츠"
     ],
     "hints": {
@@ -3910,13 +4060,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "힐러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "분홍색",
       "audioKey": "ch0221"
     },
     "terrain": {
@@ -3931,6 +4081,7 @@
     "name": "유카리(수영복)",
     "aliases": [
       "유카리(수영복)",
+      "유카리(수영복)",
       "유카리"
     ],
     "hints": {
@@ -3940,13 +4091,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "보라색",
       "audioKey": "ch0301"
     },
     "terrain": {
@@ -3961,6 +4112,7 @@
     "name": "미카(수영복)",
     "aliases": [
       "미카(수영복)",
+      "미카(수영복)",
       "미카"
     ],
     "hints": {
@@ -3970,13 +4122,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "특수장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "분홍색",
       "audioKey": "ch0294"
     },
     "terrain": {
@@ -3991,6 +4143,7 @@
     "name": "세이아(수영복)",
     "aliases": [
       "세이아(수영복)",
+      "세이아(수영복)",
       "세이아"
     ],
     "hints": {
@@ -4000,13 +4153,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "노란색",
       "audioKey": "ch0295"
     },
     "terrain": {
@@ -4021,6 +4174,7 @@
     "name": "하스미(수영복)",
     "aliases": [
       "하스미(수영복)",
+      "하스미(수영복)",
       "하스미"
     ],
     "hints": {
@@ -4030,13 +4184,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0291"
     },
     "terrain": {
@@ -4051,6 +4205,7 @@
     "name": "에리",
     "aliases": [
       "에리",
+      "에리",
       "에리"
     ],
     "hints": {
@@ -4060,13 +4215,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "기타",
+      "school": "WildHunt",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "특수장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "흰색",
       "audioKey": "ch0304"
     },
     "terrain": {
@@ -4081,6 +4236,7 @@
     "name": "카노에",
     "aliases": [
       "카노에",
+      "카노에",
       "카노에"
     ],
     "hints": {
@@ -4090,13 +4246,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SG",
-      "bounty": "기타",
+      "school": "WildHunt",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "회색",
       "audioKey": "ch0306"
     },
     "terrain": {
@@ -4111,6 +4267,7 @@
     "name": "미요",
     "aliases": [
       "미요",
+      "미요",
       "미요"
     ],
     "hints": {
@@ -4120,13 +4277,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "기타",
+      "school": "WildHunt",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "탄력장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "회색",
       "audioKey": "ch0317"
     },
     "terrain": {
@@ -4141,6 +4298,7 @@
     "name": "후유",
     "aliases": [
       "후유",
+      "후유",
       "후유"
     ],
     "hints": {
@@ -4150,13 +4308,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "기타",
+      "school": "WildHunt",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "특수장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "검은색",
       "audioKey": "ch0318"
     },
     "terrain": {
@@ -4171,6 +4329,7 @@
     "name": "스즈미(매지컬)",
     "aliases": [
       "스즈미(매지컬)",
+      "스즈미(매지컬)",
       "스즈미"
     ],
     "hints": {
@@ -4180,13 +4339,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "특수장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "흰색",
       "audioKey": "ch0325"
     },
     "terrain": {
@@ -4201,6 +4360,7 @@
     "name": "스바루",
     "aliases": [
       "스바루",
+      "스바루",
       "스바루"
     ],
     "hints": {
@@ -4210,13 +4370,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "아리우스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "검은색",
       "audioKey": "ch0309"
     },
     "terrain": {
@@ -4231,6 +4391,7 @@
     "name": "타카네",
     "aliases": [
       "타카네",
+      "타카네",
       "타카네"
     ],
     "hints": {
@@ -4240,13 +4401,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "힐러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "빨간색",
       "audioKey": "ch0229"
     },
     "terrain": {
@@ -4261,6 +4422,7 @@
     "name": "츠쿠요(드레스)",
     "aliases": [
       "츠쿠요(드레스)",
+      "츠쿠요(드레스)",
       "츠쿠요"
     ],
     "hints": {
@@ -4270,13 +4432,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "보라색",
       "audioKey": "ch0297"
     },
     "terrain": {
@@ -4291,6 +4453,7 @@
     "name": "리오(무장)",
     "aliases": [
       "리오(무장)",
+      "리오(무장)",
       "리오"
     ],
     "hints": {
@@ -4300,13 +4463,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "검은색",
       "audioKey": "ch0331"
     },
     "terrain": {
@@ -4321,6 +4484,7 @@
     "name": "아리스(무장)",
     "aliases": [
       "아리스(무장)",
+      "아리스(무장)",
       "아리스"
     ],
     "hints": {
@@ -4330,13 +4494,13 @@
       "age": "??세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "복합장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "검은색",
       "audioKey": "ch0334"
     },
     "terrain": {
@@ -4351,6 +4515,7 @@
     "name": "케이",
     "aliases": [
       "케이",
+      "케이",
       "케이"
     ],
     "hints": {
@@ -4360,13 +4525,13 @@
       "age": "??세",
       "grade": "1학년",
       "weapon": "RG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "복합장갑",
-      "range": 850,
-      "hairColor": "",
+      "range": "850",
+      "hairColor": "흰색",
       "audioKey": "ch0335"
     },
     "terrain": {
@@ -4381,6 +4546,7 @@
     "name": "에이미(무장)",
     "aliases": [
       "에이미(무장)",
+      "에이미(무장)",
       "에이미"
     ],
     "hints": {
@@ -4390,13 +4556,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "분홍색",
       "audioKey": "ch0337"
     },
     "terrain": {
@@ -4411,6 +4577,7 @@
     "name": "코노카",
     "aliases": [
       "코노카",
+      "코노카",
       "코노카"
     ],
     "hints": {
@@ -4420,13 +4587,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SG",
-      "bounty": "고가도로",
+      "school": "발키리",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "흰색",
       "audioKey": "ch0264"
     },
     "terrain": {
@@ -4441,6 +4608,7 @@
     "name": "레나",
     "aliases": [
       "레나",
+      "레나",
       "레나"
     ],
     "hints": {
@@ -4450,13 +4618,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "기타",
+      "school": "WildHunt",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "갈색",
       "audioKey": "ch0305"
     },
     "terrain": {
@@ -4471,6 +4639,7 @@
     "name": "니코",
     "aliases": [
       "니코",
+      "니코",
       "니코"
     ],
     "hints": {
@@ -4480,13 +4649,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SG",
-      "bounty": "교실",
+      "school": "SRT",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "탄력장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "분홍색",
       "audioKey": "ch0172"
     },
     "terrain": {
@@ -4501,6 +4670,7 @@
     "name": "쿠루미",
     "aliases": [
       "쿠루미",
+      "쿠루미",
       "쿠루미"
     ],
     "hints": {
@@ -4510,13 +4680,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "SRT",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "노란색",
       "audioKey": "ch0173"
     },
     "terrain": {
@@ -4531,6 +4701,7 @@
     "name": "하루카(드레스)",
     "aliases": [
       "하루카(드레스)",
+      "하루카(드레스)",
       "하루카"
     ],
     "hints": {
@@ -4540,13 +4711,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "보라색",
       "audioKey": "ch0247"
     },
     "terrain": {
@@ -4561,6 +4732,7 @@
     "name": "나구사(수영복)",
     "aliases": [
       "나구사(수영복)",
+      "나구사(수영복)",
       "나구사"
     ],
     "hints": {
@@ -4570,13 +4742,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "흰색",
       "audioKey": "ch0303"
     },
     "terrain": {
@@ -4591,6 +4763,7 @@
     "name": "슌(수영복)",
     "aliases": [
       "슌(수영복)",
+      "슌(수영복)",
       "슌"
     ],
     "hints": {
@@ -4600,13 +4773,13 @@
       "age": "극비",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "산해경",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0355_01"
     },
     "terrain": {
@@ -4621,6 +4794,7 @@
     "name": "슈에링(수영복)",
     "aliases": [
       "슈에링(수영복)",
+      "슈에링(수영복)",
       "슈에링"
     ],
     "hints": {
@@ -4630,13 +4804,13 @@
       "age": "극비",
       "grade": "극비",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "산해경",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "ch0355_02"
     },
     "terrain": {
@@ -4651,6 +4825,7 @@
     "name": "키사키(수영복)",
     "aliases": [
       "키사키(수영복)",
+      "키사키(수영복)",
       "키사키"
     ],
     "hints": {
@@ -4660,13 +4835,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SMG",
-      "bounty": "고가도로",
+      "school": "산해경",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "탄력장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "검은색",
       "audioKey": "ch0356"
     },
     "terrain": {
@@ -4681,6 +4856,7 @@
     "name": "마코토(수영복)",
     "aliases": [
       "마코토(수영복)",
+      "마코토(수영복)",
       "마코토"
     ],
     "hints": {
@@ -4690,13 +4866,13 @@
       "age": "18세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "회색",
       "audioKey": "ch0344"
     },
     "terrain": {
@@ -4711,6 +4887,7 @@
     "name": "사츠키(수영복)",
     "aliases": [
       "사츠키(수영복)",
+      "사츠키(수영복)",
       "사츠키"
     ],
     "hints": {
@@ -4720,13 +4897,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "힐러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "탄력장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "분홍색",
       "audioKey": "ch0345"
     },
     "terrain": {
@@ -4741,6 +4918,7 @@
     "name": "이로하(수영복)",
     "aliases": [
       "이로하(수영복)",
+      "이로하(수영복)",
       "이로하"
     ],
     "hints": {
@@ -4750,13 +4928,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "빨간색",
       "audioKey": "ch0346"
     },
     "terrain": {
@@ -4771,6 +4949,7 @@
     "name": "아카네",
     "aliases": [
       "아카네",
+      "아카네",
       "아카네"
     ],
     "hints": {
@@ -4780,13 +4959,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "갈색",
       "audioKey": "akane"
     },
     "terrain": {
@@ -4801,6 +4980,7 @@
     "name": "치세",
     "aliases": [
       "치세",
+      "치세",
       "치세"
     ],
     "hints": {
@@ -4810,13 +4990,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "GL",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "하늘색",
       "audioKey": "chise"
     },
     "terrain": {
@@ -4831,6 +5011,7 @@
     "name": "아카리",
     "aliases": [
       "아카리",
+      "아카리",
       "아카리"
     ],
     "hints": {
@@ -4840,13 +5021,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "노란색",
       "audioKey": "akari"
     },
     "terrain": {
@@ -4861,6 +5042,7 @@
     "name": "하스미",
     "aliases": [
       "하스미",
+      "하스미",
       "하스미"
     ],
     "hints": {
@@ -4870,13 +5052,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "검은색",
       "audioKey": "hasumi"
     },
     "terrain": {
@@ -4891,6 +5073,7 @@
     "name": "노노미",
     "aliases": [
       "노노미",
+      "노노미",
       "노노미"
     ],
     "hints": {
@@ -4900,13 +5083,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "MG",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "노란색",
       "audioKey": "nonomi"
     },
     "terrain": {
@@ -4921,6 +5104,7 @@
     "name": "카요코",
     "aliases": [
       "카요코",
+      "카요코",
       "카요코"
     ],
     "hints": {
@@ -4930,13 +5114,13 @@
       "age": "18세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "흰색",
       "audioKey": "kayoko"
     },
     "terrain": {
@@ -4951,6 +5135,7 @@
     "name": "무츠키",
     "aliases": [
       "무츠키",
+      "무츠키",
       "무츠키"
     ],
     "hints": {
@@ -4960,13 +5145,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "MG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "흰색",
       "audioKey": "mutsuki"
     },
     "terrain": {
@@ -4981,6 +5166,7 @@
     "name": "준코",
     "aliases": [
       "준코",
+      "준코",
       "준코"
     ],
     "hints": {
@@ -4990,13 +5176,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "빨간색",
       "audioKey": "zunko"
     },
     "terrain": {
@@ -5011,6 +5197,7 @@
     "name": "세리카",
     "aliases": [
       "세리카",
+      "세리카",
       "세리카"
     ],
     "hints": {
@@ -5020,13 +5207,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "검은색",
       "audioKey": "serika"
     },
     "terrain": {
@@ -5041,6 +5228,7 @@
     "name": "츠바키",
     "aliases": [
       "츠바키",
+      "츠바키",
       "츠바키"
     ],
     "hints": {
@@ -5050,13 +5238,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "검은색",
       "audioKey": "tsubaki"
     },
     "terrain": {
@@ -5071,6 +5259,7 @@
     "name": "유우카",
     "aliases": [
       "유우카",
+      "유우카",
       "유우카"
     ],
     "hints": {
@@ -5080,13 +5269,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "파란색",
       "audioKey": "yuuka"
     },
     "terrain": {
@@ -5101,6 +5290,7 @@
     "name": "모모이",
     "aliases": [
       "모모이",
+      "모모이",
       "모모이"
     ],
     "hints": {
@@ -5110,13 +5300,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "노란색",
       "audioKey": "momoi"
     },
     "terrain": {
@@ -5131,6 +5321,7 @@
     "name": "키리노",
     "aliases": [
       "키리노",
+      "키리노",
       "키리노"
     ],
     "hints": {
@@ -5140,13 +5331,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "발키리",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "흰색",
       "audioKey": "ch0140"
     },
     "terrain": {
@@ -5161,6 +5352,7 @@
     "name": "모미지",
     "aliases": [
       "모미지",
+      "모미지",
       "모미지"
     ],
     "hints": {
@@ -5170,13 +5362,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "RL",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "중장갑",
-      "range": 850,
-      "hairColor": "",
+      "range": "850",
+      "hairColor": "초록색",
       "audioKey": "ch0126"
     },
     "terrain": {
@@ -5191,6 +5383,7 @@
     "name": "렌게(수영복)",
     "aliases": [
       "렌게(수영복)",
+      "렌게(수영복)",
       "렌게"
     ],
     "hints": {
@@ -5200,13 +5393,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "특수장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "빨간색",
       "audioKey": "ch0302"
     },
     "terrain": {
@@ -5221,6 +5414,7 @@
     "name": "하루카",
     "aliases": [
       "하루카",
+      "하루카",
       "하루카"
     ],
     "hints": {
@@ -5230,13 +5424,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "보라색",
       "audioKey": "haruka"
     },
     "terrain": {
@@ -5251,6 +5445,7 @@
     "name": "아스나",
     "aliases": [
       "아스나",
+      "아스나",
       "아스나"
     ],
     "hints": {
@@ -5260,13 +5455,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "갈색",
       "audioKey": "asuna"
     },
     "terrain": {
@@ -5281,6 +5476,7 @@
     "name": "코토리",
     "aliases": [
       "코토리",
+      "코토리",
       "코토리"
     ],
     "hints": {
@@ -5290,13 +5486,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "MG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "노란색",
       "audioKey": "kotori"
     },
     "terrain": {
@@ -5311,6 +5507,7 @@
     "name": "스즈미",
     "aliases": [
       "스즈미",
+      "스즈미",
       "스즈미"
     ],
     "hints": {
@@ -5320,13 +5517,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "흰색",
       "audioKey": "suzumi"
     },
     "terrain": {
@@ -5341,6 +5538,7 @@
     "name": "피나",
     "aliases": [
       "피나",
+      "피나",
       "피나"
     ],
     "hints": {
@@ -5350,13 +5548,13 @@
       "age": "17세",
       "grade": "1학년",
       "weapon": "MG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "노란색",
       "audioKey": "pina"
     },
     "terrain": {
@@ -5371,6 +5569,7 @@
     "name": "츠루기(수영복)",
     "aliases": [
       "츠루기(수영복)",
+      "츠루기(수영복)",
       "츠루기"
     ],
     "hints": {
@@ -5380,13 +5579,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "검은색",
       "audioKey": "ch0060"
     },
     "terrain": {
@@ -5401,6 +5600,7 @@
     "name": "이즈미(수영복)",
     "aliases": [
       "이즈미(수영복)",
+      "이즈미(수영복)",
       "이즈미"
     ],
     "hints": {
@@ -5410,13 +5610,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "MG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "갈색",
       "audioKey": "ch0062"
     },
     "terrain": {
@@ -5431,6 +5631,7 @@
     "name": "토모에",
     "aliases": [
       "토모에",
+      "토모에",
       "토모에"
     ],
     "hints": {
@@ -5440,13 +5641,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "분홍색",
       "audioKey": "ch0120"
     },
     "terrain": {
@@ -5461,6 +5662,7 @@
     "name": "후부키",
     "aliases": [
       "후부키",
+      "후부키",
       "후부키"
     ],
     "hints": {
@@ -5470,13 +5672,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "발키리",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "파란색",
       "audioKey": "ch0141"
     },
     "terrain": {
@@ -5491,6 +5693,7 @@
     "name": "미치루",
     "aliases": [
       "미치루",
+      "미치루",
       "미치루"
     ],
     "hints": {
@@ -5500,13 +5703,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "회색",
       "audioKey": "ch0113"
     },
     "terrain": {
@@ -5521,6 +5724,7 @@
     "name": "히비키(응원단)",
     "aliases": [
       "히비키(응원단)",
+      "히비키(응원단)",
       "히비키"
     ],
     "hints": {
@@ -5530,13 +5734,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "MT",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 850,
-      "hairColor": "",
+      "range": "850",
+      "hairColor": "검은색",
       "audioKey": "ch0181"
     },
     "terrain": {
@@ -5551,6 +5755,7 @@
     "name": "하스미(체육복)",
     "aliases": [
       "하스미(체육복)",
+      "하스미(체육복)",
       "하스미"
     ],
     "hints": {
@@ -5560,13 +5765,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 850,
-      "hairColor": "",
+      "range": "850",
+      "hairColor": "검은색",
       "audioKey": "ch0190"
     },
     "terrain": {
@@ -5581,6 +5786,7 @@
     "name": "준코(새해)",
     "aliases": [
       "준코(새해)",
+      "준코(새해)",
       "준코"
     ],
     "hints": {
@@ -5590,13 +5796,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "빨간색",
       "audioKey": "ch0192"
     },
     "terrain": {
@@ -5611,6 +5817,7 @@
     "name": "코하루(수영복)",
     "aliases": [
       "코하루(수영복)",
+      "코하루(수영복)",
       "코하루"
     ],
     "hints": {
@@ -5620,13 +5827,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "분홍색",
       "audioKey": "ch0205"
     },
     "terrain": {
@@ -5641,6 +5848,7 @@
     "name": "이부키",
     "aliases": [
       "이부키",
+      "이부키",
       "이부키"
     ],
     "hints": {
@@ -5650,13 +5858,13 @@
       "age": "11세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 650,
-      "hairColor": "",
+      "range": "650",
+      "hairColor": "노란색",
       "audioKey": "ch0077"
     },
     "terrain": {
@@ -5671,6 +5879,7 @@
     "name": "아이리(밴드)",
     "aliases": [
       "아이리(밴드)",
+      "아이리(밴드)",
       "아이리"
     ],
     "hints": {
@@ -5680,13 +5889,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "갈색",
       "audioKey": "ch0251"
     },
     "terrain": {
@@ -5701,6 +5910,7 @@
     "name": "미네(아이돌)",
     "aliases": [
       "미네(아이돌)",
+      "미네(아이돌)",
       "미네"
     ],
     "hints": {
@@ -5710,13 +5920,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "하늘색",
       "audioKey": "ch0275"
     },
     "terrain": {
@@ -5731,6 +5941,7 @@
     "name": "아오바",
     "aliases": [
       "아오바",
+      "아오바",
       "아오바"
     ],
     "hints": {
@@ -5740,13 +5951,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SG",
-      "bounty": "고가도로",
+      "school": "하이랜더",
       "role": "탱커",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "경장갑",
-      "range": 350,
-      "hairColor": "",
+      "range": "350",
+      "hairColor": "노란색",
       "audioKey": "ch0288"
     },
     "terrain": {
@@ -5761,6 +5972,7 @@
     "name": "라브",
     "aliases": [
       "라브",
+      "라브",
       "라브"
     ],
     "hints": {
@@ -5770,13 +5982,13 @@
       "age": "16세",
       "grade": "중퇴",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "진동",
       "defenseType": "특수장갑",
-      "range": 450,
-      "hairColor": "",
+      "range": "450",
+      "hairColor": "빨간색",
       "audioKey": "ch0166"
     },
     "terrain": {
@@ -5791,6 +6003,7 @@
     "name": "토키(무장)",
     "aliases": [
       "토키(무장)",
+      "토키(무장)",
       "토키"
     ],
     "hints": {
@@ -5800,13 +6013,13 @@
       "age": "16세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스트라이커",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 550,
-      "hairColor": "",
+      "range": "550",
+      "hairColor": "노란색",
       "audioKey": "ch0333"
     },
     "terrain": {
@@ -5821,6 +6034,7 @@
     "name": "오토기",
     "aliases": [
       "오토기",
+      "오토기",
       "오토기"
     ],
     "hints": {
@@ -5830,13 +6044,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "교실",
+      "school": "SRT",
       "role": "딜러",
       "squadType": "스트라이커",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 750,
-      "hairColor": "",
+      "range": "750",
+      "hairColor": "갈색",
       "audioKey": "ch0174"
     },
     "terrain": {
@@ -5851,6 +6065,7 @@
     "name": "히비키",
     "aliases": [
       "히비키",
+      "히비키",
       "히비키"
     ],
     "hints": {
@@ -5860,13 +6075,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "MT",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "hibiki"
     },
     "terrain": {
@@ -5881,6 +6096,7 @@
     "name": "카린",
     "aliases": [
       "카린",
+      "카린",
       "카린"
     ],
     "hints": {
@@ -5890,13 +6106,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "karin"
     },
     "terrain": {
@@ -5911,6 +6127,7 @@
     "name": "사야",
     "aliases": [
       "사야",
+      "사야",
       "사야"
     ],
     "hints": {
@@ -5920,13 +6137,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "산해경",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "회색",
       "audioKey": "saya"
     },
     "terrain": {
@@ -5941,6 +6158,7 @@
     "name": "마시로",
     "aliases": [
       "마시로",
+      "마시로",
       "마시로"
     ],
     "hints": {
@@ -5950,13 +6168,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "mashiro"
     },
     "terrain": {
@@ -5971,6 +6189,7 @@
     "name": "마시로(수영복)",
     "aliases": [
       "마시로(수영복)",
+      "마시로(수영복)",
       "마시로"
     ],
     "hints": {
@@ -5980,13 +6199,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0061"
     },
     "terrain": {
@@ -6001,6 +6220,7 @@
     "name": "히후미(수영복)",
     "aliases": [
       "히후미(수영복)",
+      "히후미(수영복)",
       "히후미"
     ],
     "hints": {
@@ -6010,13 +6230,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "T.S",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "노란색",
       "audioKey": "ch0058"
     },
     "terrain": {
@@ -6031,6 +6251,7 @@
     "name": "사야(사복)",
     "aliases": [
       "사야(사복)",
+      "사야(사복)",
       "사야"
     ],
     "hints": {
@@ -6040,13 +6261,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "산해경",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "회색",
       "audioKey": "ch0133"
     },
     "terrain": {
@@ -6061,6 +6282,7 @@
     "name": "하츠네 미쿠",
     "aliases": [
       "하츠네 미쿠",
+      "하츠네 미쿠",
       "하츠네 미쿠"
     ],
     "hints": {
@@ -6070,13 +6292,13 @@
       "age": "16세",
       "grade": "비밀",
       "weapon": "GL",
-      "bounty": "기타",
+      "school": "ETC",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "하늘색",
       "audioKey": "ch9999"
     },
     "terrain": {
@@ -6091,6 +6313,7 @@
     "name": "아코",
     "aliases": [
       "아코",
+      "아코",
       "아코"
     ],
     "hints": {
@@ -6100,13 +6323,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "파란색",
       "audioKey": "ch0083"
     },
     "terrain": {
@@ -6121,6 +6344,7 @@
     "name": "체리노(온천)",
     "aliases": [
       "체리노(온천)",
+      "체리노(온천)",
       "체리노"
     ],
     "hints": {
@@ -6130,13 +6354,13 @@
       "age": "??세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "T.S",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "흰색",
       "audioKey": "ch0164"
     },
     "terrain": {
@@ -6151,6 +6375,7 @@
     "name": "노도카(온천)",
     "aliases": [
       "노도카(온천)",
+      "노도카(온천)",
       "노도카"
     ],
     "hints": {
@@ -6160,13 +6385,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "분홍색",
       "audioKey": "ch0165"
     },
     "terrain": {
@@ -6181,6 +6406,7 @@
     "name": "세리카(새해)",
     "aliases": [
       "세리카(새해)",
+      "세리카(새해)",
       "세리카"
     ],
     "hints": {
@@ -6190,13 +6416,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0090"
     },
     "terrain": {
@@ -6211,6 +6437,7 @@
     "name": "세나",
     "aliases": [
       "세나",
+      "세나",
       "세나"
     ],
     "hints": {
@@ -6220,13 +6447,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "GL",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "T.S",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "흰색",
       "audioKey": "ch0081"
     },
     "terrain": {
@@ -6241,6 +6468,7 @@
     "name": "치히로",
     "aliases": [
       "치히로",
+      "치히로",
       "치히로"
     ],
     "hints": {
@@ -6250,13 +6478,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0160"
     },
     "terrain": {
@@ -6271,6 +6499,7 @@
     "name": "사키",
     "aliases": [
       "사키",
+      "사키",
       "사키"
     ],
     "hints": {
@@ -6280,13 +6509,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "MG",
-      "bounty": "교실",
+      "school": "SRT",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "회색",
       "audioKey": "ch0144"
     },
     "terrain": {
@@ -6301,6 +6530,7 @@
     "name": "카에데",
     "aliases": [
       "카에데",
+      "카에데",
       "카에데"
     ],
     "hints": {
@@ -6310,13 +6540,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0116"
     },
     "terrain": {
@@ -6331,6 +6561,7 @@
     "name": "이로하",
     "aliases": [
       "이로하",
+      "이로하",
       "이로하"
     ],
     "hints": {
@@ -6340,13 +6571,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "T.S",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "빨간색",
       "audioKey": "ch0156"
     },
     "terrain": {
@@ -6361,6 +6592,7 @@
     "name": "히요리",
     "aliases": [
       "히요리",
+      "히요리",
       "히요리"
     ],
     "hints": {
@@ -6370,13 +6602,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "교실",
+      "school": "아리우스",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "하늘색",
       "audioKey": "ch0106"
     },
     "terrain": {
@@ -6391,6 +6623,7 @@
     "name": "모에",
     "aliases": [
       "모에",
+      "모에",
       "모에"
     ],
     "hints": {
@@ -6400,13 +6633,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "SRT",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "갈색",
       "audioKey": "ch0143"
     },
     "terrain": {
@@ -6421,6 +6654,7 @@
     "name": "아카네(바니걸)",
     "aliases": [
       "아카네(바니걸)",
+      "아카네(바니걸)",
       "아카네"
     ],
     "hints": {
@@ -6430,13 +6664,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "갈색",
       "audioKey": "ch0099"
     },
     "terrain": {
@@ -6451,6 +6685,7 @@
     "name": "히마리",
     "aliases": [
       "히마리",
+      "히마리",
       "히마리"
     ],
     "hints": {
@@ -6460,13 +6695,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "흰색",
       "audioKey": "ch0159"
     },
     "terrain": {
@@ -6481,6 +6716,7 @@
     "name": "하나에(크리스마스)",
     "aliases": [
       "하나에(크리스마스)",
+      "하나에(크리스마스)",
       "하나에"
     ],
     "hints": {
@@ -6490,13 +6726,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "보라색",
       "audioKey": "ch0195"
     },
     "terrain": {
@@ -6511,6 +6747,7 @@
     "name": "후우카(새해)",
     "aliases": [
       "후우카(새해)",
+      "후우카(새해)",
       "후우카"
     ],
     "hints": {
@@ -6520,13 +6757,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SMG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0177"
     },
     "terrain": {
@@ -6541,6 +6778,7 @@
     "name": "칸나",
     "aliases": [
       "칸나",
+      "칸나",
       "칸나"
     ],
     "hints": {
@@ -6550,13 +6788,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "발키리",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "노란색",
       "audioKey": "ch0170"
     },
     "terrain": {
@@ -6571,6 +6809,7 @@
     "name": "나기사",
     "aliases": [
       "나기사",
+      "나기사",
       "나기사"
     ],
     "hints": {
@@ -6580,13 +6819,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "갈색",
       "audioKey": "ch0068"
     },
     "terrain": {
@@ -6601,6 +6840,7 @@
     "name": "하루카(새해)",
     "aliases": [
       "하루카(새해)",
+      "하루카(새해)",
       "하루카"
     ],
     "hints": {
@@ -6610,13 +6850,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "보라색",
       "audioKey": "ch0087"
     },
     "terrain": {
@@ -6631,6 +6871,7 @@
     "name": "미노리",
     "aliases": [
       "미노리",
+      "미노리",
       "미노리"
     ],
     "hints": {
@@ -6640,13 +6881,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "회색",
       "audioKey": "ch0214"
     },
     "terrain": {
@@ -6661,6 +6902,7 @@
     "name": "시로코(수영복)",
     "aliases": [
       "시로코(수영복)",
+      "시로코(수영복)",
       "시로코"
     ],
     "hints": {
@@ -6670,13 +6912,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "회색",
       "audioKey": "ch0188"
     },
     "terrain": {
@@ -6691,6 +6933,7 @@
     "name": "히나타(수영복)",
     "aliases": [
       "히나타(수영복)",
+      "히나타(수영복)",
       "히나타"
     ],
     "hints": {
@@ -6700,13 +6943,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0210"
     },
     "terrain": {
@@ -6721,6 +6964,7 @@
     "name": "미모리(수영복)",
     "aliases": [
       "미모리(수영복)",
+      "미모리(수영복)",
       "미모리"
     ],
     "hints": {
@@ -6730,13 +6974,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "분홍색",
       "audioKey": "ch0183"
     },
     "terrain": {
@@ -6751,6 +6995,7 @@
     "name": "하루나(체육복)",
     "aliases": [
       "하루나(체육복)",
+      "하루나(체육복)",
       "하루나"
     ],
     "hints": {
@@ -6760,13 +7005,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "진동",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "흰색",
       "audioKey": "ch0193"
     },
     "terrain": {
@@ -6781,6 +7026,7 @@
     "name": "시구레(온천)",
     "aliases": [
       "시구레(온천)",
+      "시구레(온천)",
       "시구레"
     ],
     "hints": {
@@ -6790,13 +7036,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "GL",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "하늘색",
       "audioKey": "ch0123"
     },
     "terrain": {
@@ -6811,6 +7057,7 @@
     "name": "에이미(수영복)",
     "aliases": [
       "에이미(수영복)",
+      "에이미(수영복)",
       "에이미"
     ],
     "hints": {
@@ -6820,13 +7067,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "분홍색",
       "audioKey": "ch0219"
     },
     "terrain": {
@@ -6841,6 +7088,7 @@
     "name": "마코토",
     "aliases": [
       "마코토",
+      "마코토",
       "마코토"
     ],
     "hints": {
@@ -6850,13 +7098,13 @@
       "age": "18세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "회색",
       "audioKey": "ch0079"
     },
     "terrain": {
@@ -6871,6 +7119,7 @@
     "name": "아카리(새해)",
     "aliases": [
       "아카리(새해)",
+      "아카리(새해)",
       "아카리"
     ],
     "hints": {
@@ -6880,13 +7129,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "AR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "T.S",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "노란색",
       "audioKey": "ch0196"
     },
     "terrain": {
@@ -6901,6 +7150,7 @@
     "name": "츠바키(가이드)",
     "aliases": [
       "츠바키(가이드)",
+      "츠바키(가이드)",
       "츠바키"
     ],
     "hints": {
@@ -6910,13 +7160,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0255"
     },
     "terrain": {
@@ -6931,6 +7181,7 @@
     "name": "세리카(수영복)",
     "aliases": [
       "세리카(수영복)",
+      "세리카(수영복)",
       "세리카"
     ],
     "hints": {
@@ -6940,13 +7191,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0189"
     },
     "terrain": {
@@ -6961,6 +7212,7 @@
     "name": "후부키(수영복)",
     "aliases": [
       "후부키(수영복)",
+      "후부키(수영복)",
       "후부키"
     ],
     "hints": {
@@ -6970,13 +7222,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "고가도로",
+      "school": "발키리",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "파란색",
       "audioKey": "ch0261"
     },
     "terrain": {
@@ -6991,6 +7243,7 @@
     "name": "토모에(치파오)",
     "aliases": [
       "토모에(치파오)",
+      "토모에(치파오)",
       "토모에"
     ],
     "hints": {
@@ -7000,13 +7253,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "분홍색",
       "audioKey": "ch0271"
     },
     "terrain": {
@@ -7021,6 +7274,7 @@
     "name": "키사키",
     "aliases": [
       "키사키",
+      "키사키",
       "키사키"
     ],
     "hints": {
@@ -7030,13 +7284,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SMG",
-      "bounty": "고가도로",
+      "school": "산해경",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "진동",
       "defenseType": "탄력장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0139"
     },
     "terrain": {
@@ -7051,6 +7305,7 @@
     "name": "사츠키",
     "aliases": [
       "사츠키",
+      "사츠키",
       "사츠키"
     ],
     "hints": {
@@ -7060,13 +7315,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "분홍색",
       "audioKey": "ch0080"
     },
     "terrain": {
@@ -7081,6 +7336,7 @@
     "name": "리오",
     "aliases": [
       "리오",
+      "리오",
       "리오"
     ],
     "hints": {
@@ -7090,13 +7346,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "탄력장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0158"
     },
     "terrain": {
@@ -7111,6 +7367,7 @@
     "name": "마키(캠핑)",
     "aliases": [
       "마키(캠핑)",
+      "마키(캠핑)",
       "마키"
     ],
     "hints": {
@@ -7120,13 +7377,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "MG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "빨간색",
       "audioKey": "ch0235"
     },
     "terrain": {
@@ -7141,6 +7398,7 @@
     "name": "이즈미(새해)",
     "aliases": [
       "이즈미(새해)",
+      "이즈미(새해)",
       "이즈미"
     ],
     "hints": {
@@ -7150,13 +7408,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "MG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "회색",
       "audioKey": "ch0197"
     },
     "terrain": {
@@ -7171,6 +7429,7 @@
     "name": "스미레(아르바이트)",
     "aliases": [
       "스미레(아르바이트)",
+      "스미레(아르바이트)",
       "스미레"
     ],
     "hints": {
@@ -7180,13 +7439,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0287"
     },
     "terrain": {
@@ -7201,6 +7460,7 @@
     "name": "피나(가이드)",
     "aliases": [
       "피나(가이드)",
+      "피나(가이드)",
       "피나"
     ],
     "hints": {
@@ -7210,13 +7470,13 @@
       "age": "17세",
       "grade": "1학년",
       "weapon": "MG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "노란색",
       "audioKey": "ch0257"
     },
     "terrain": {
@@ -7231,6 +7491,7 @@
     "name": "니야",
     "aliases": [
       "니야",
+      "니야",
       "니야"
     ],
     "hints": {
@@ -7240,13 +7501,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "진동",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "갈색",
       "audioKey": "ch0109"
     },
     "terrain": {
@@ -7261,6 +7522,7 @@
     "name": "키쿄(수영복)",
     "aliases": [
       "키쿄(수영복)",
+      "키쿄(수영복)",
       "키쿄"
     ],
     "hints": {
@@ -7270,13 +7532,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "진동",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0300"
     },
     "terrain": {
@@ -7291,6 +7553,7 @@
     "name": "나기사(수영복)",
     "aliases": [
       "나기사(수영복)",
+      "나기사(수영복)",
       "나기사"
     ],
     "hints": {
@@ -7300,13 +7563,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "진동",
       "defenseType": "탄력장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "갈색",
       "audioKey": "ch0293"
     },
     "terrain": {
@@ -7321,6 +7584,7 @@
     "name": "미사키(수영복)",
     "aliases": [
       "미사키(수영복)",
+      "미사키(수영복)",
       "미사키"
     ],
     "hints": {
@@ -7330,13 +7594,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "RL",
-      "bounty": "교실",
+      "school": "아리우스",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0268"
     },
     "terrain": {
@@ -7351,6 +7615,7 @@
     "name": "리츠",
     "aliases": [
       "리츠",
+      "리츠",
       "리츠"
     ],
     "hints": {
@@ -7360,13 +7625,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "기타",
+      "school": "WildHunt",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "초록색",
       "audioKey": "ch0319"
     },
     "terrain": {
@@ -7381,6 +7646,7 @@
     "name": "레이사(매지컬)",
     "aliases": [
       "레이사(매지컬)",
+      "레이사(매지컬)",
       "레이사"
     ],
     "hints": {
@@ -7390,13 +7656,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "진동",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "보라색",
       "audioKey": "ch0326"
     },
     "terrain": {
@@ -7411,6 +7677,7 @@
     "name": "야쿠모",
     "aliases": [
       "야쿠모",
+      "야쿠모",
       "야쿠모"
     ],
     "hints": {
@@ -7420,13 +7687,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "초록색",
       "audioKey": "ch0228"
     },
     "terrain": {
@@ -7441,6 +7708,7 @@
     "name": "미치루(드레스)",
     "aliases": [
       "미치루(드레스)",
+      "미치루(드레스)",
       "미치루"
     ],
     "hints": {
@@ -7450,13 +7718,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "회색",
       "audioKey": "ch0296"
     },
     "terrain": {
@@ -7471,6 +7739,7 @@
     "name": "히마리(무장)",
     "aliases": [
       "히마리(무장)",
+      "히마리(무장)",
       "히마리"
     ],
     "hints": {
@@ -7480,13 +7749,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "T.S",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "탄력장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "흰색",
       "audioKey": "ch0332"
     },
     "terrain": {
@@ -7501,6 +7770,7 @@
     "name": "유즈(무장)",
     "aliases": [
       "유즈(무장)",
+      "유즈(무장)",
       "유즈"
     ],
     "hints": {
@@ -7510,13 +7780,13 @@
       "age": "16세",
       "grade": "1학년",
       "weapon": "GL",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "빨간색",
       "audioKey": "ch0336"
     },
     "terrain": {
@@ -7531,6 +7801,7 @@
     "name": "코유키(파자마)",
     "aliases": [
       "코유키(파자마)",
+      "코유키(파자마)",
       "코유키"
     ],
     "hints": {
@@ -7540,13 +7811,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "MG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "분홍색",
       "audioKey": "ch0310"
     },
     "terrain": {
@@ -7561,6 +7832,7 @@
     "name": "아카네(교복)",
     "aliases": [
       "아카네(교복)",
+      "아카네(교복)",
       "아카네"
     ],
     "hints": {
@@ -7570,13 +7842,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "갈색",
       "audioKey": "ch0307"
     },
     "terrain": {
@@ -7591,6 +7863,7 @@
     "name": "에리카",
     "aliases": [
       "에리카",
+      "에리카",
       "에리카"
     ],
     "hints": {
@@ -7600,13 +7873,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "진동",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "흰색",
       "audioKey": "ch0076"
     },
     "terrain": {
@@ -7621,6 +7894,7 @@
     "name": "무츠키(드레스)",
     "aliases": [
       "무츠키(드레스)",
+      "무츠키(드레스)",
       "무츠키"
     ],
     "hints": {
@@ -7630,13 +7904,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "MG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "흰색",
       "audioKey": "ch0246"
     },
     "terrain": {
@@ -7651,6 +7925,7 @@
     "name": "이부키(수영복)",
     "aliases": [
       "이부키(수영복)",
+      "이부키(수영복)",
       "이부키"
     ],
     "hints": {
@@ -7660,13 +7935,13 @@
       "age": "11세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "노란색",
       "audioKey": "ch0347"
     },
     "terrain": {
@@ -7681,6 +7956,7 @@
     "name": "아이리",
     "aliases": [
       "아이리",
+      "아이리",
       "아이리"
     ],
     "hints": {
@@ -7690,13 +7966,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "갈색",
       "audioKey": "airi"
     },
     "terrain": {
@@ -7711,6 +7987,7 @@
     "name": "후우카",
     "aliases": [
       "후우카",
+      "후우카",
       "후우카"
     ],
     "hints": {
@@ -7720,13 +7997,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SMG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "fuuka"
     },
     "terrain": {
@@ -7741,6 +8018,7 @@
     "name": "하나에",
     "aliases": [
       "하나에",
+      "하나에",
       "하나에"
     ],
     "hints": {
@@ -7750,13 +8028,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "보라색",
       "audioKey": "hanae"
     },
     "terrain": {
@@ -7771,6 +8049,7 @@
     "name": "하레",
     "aliases": [
       "하레",
+      "하레",
       "하레"
     ],
     "hints": {
@@ -7780,13 +8059,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "흰색",
       "audioKey": "hare"
     },
     "terrain": {
@@ -7801,6 +8080,7 @@
     "name": "우타하",
     "aliases": [
       "우타하",
+      "우타하",
       "우타하"
     ],
     "hints": {
@@ -7810,13 +8090,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "보라색",
       "audioKey": "utaha"
     },
     "terrain": {
@@ -7831,6 +8111,7 @@
     "name": "아야네",
     "aliases": [
       "아야네",
+      "아야네",
       "아야네"
     ],
     "hints": {
@@ -7840,13 +8121,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ayane"
     },
     "terrain": {
@@ -7861,6 +8142,7 @@
     "name": "시즈코",
     "aliases": [
       "시즈코",
+      "시즈코",
       "시즈코"
     ],
     "hints": {
@@ -7870,13 +8152,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "갈색",
       "audioKey": "shizuko"
     },
     "terrain": {
@@ -7891,6 +8173,7 @@
     "name": "하나코",
     "aliases": [
       "하나코",
+      "하나코",
       "하나코"
     ],
     "hints": {
@@ -7900,13 +8183,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "분홍색",
       "audioKey": "ch0055"
     },
     "terrain": {
@@ -7921,6 +8204,7 @@
     "name": "마리",
     "aliases": [
       "마리",
+      "마리",
       "마리"
     ],
     "hints": {
@@ -7930,13 +8214,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "주황색",
       "audioKey": "ch0072"
     },
     "terrain": {
@@ -7951,6 +8235,7 @@
     "name": "치나츠",
     "aliases": [
       "치나츠",
+      "치나츠",
       "치나츠"
     ],
     "hints": {
@@ -7960,13 +8245,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "갈색",
       "audioKey": "chinatsu"
     },
     "terrain": {
@@ -7981,6 +8266,7 @@
     "name": "코타마",
     "aliases": [
       "코타마",
+      "코타마",
       "코타마"
     ],
     "hints": {
@@ -7990,13 +8276,13 @@
       "age": "17세",
       "grade": "3학년",
       "weapon": "HG",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "노란색",
       "audioKey": "kotama"
     },
     "terrain": {
@@ -8011,6 +8297,7 @@
     "name": "주리",
     "aliases": [
       "주리",
+      "주리",
       "주리"
     ],
     "hints": {
@@ -8020,13 +8307,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SG",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "분홍색",
       "audioKey": "juri"
     },
     "terrain": {
@@ -8041,6 +8328,7 @@
     "name": "세리나",
     "aliases": [
       "세리나",
+      "세리나",
       "세리나"
     ],
     "hints": {
@@ -8050,13 +8338,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "분홍색",
       "audioKey": "serina"
     },
     "terrain": {
@@ -8071,6 +8359,7 @@
     "name": "시미코",
     "aliases": [
       "시미코",
+      "시미코",
       "시미코"
     ],
     "hints": {
@@ -8080,13 +8369,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "주황색",
       "audioKey": "shimiko"
     },
     "terrain": {
@@ -8101,6 +8390,7 @@
     "name": "요시미",
     "aliases": [
       "요시미",
+      "요시미",
       "요시미"
     ],
     "hints": {
@@ -8110,13 +8400,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "노란색",
       "audioKey": "yoshimi"
     },
     "terrain": {
@@ -8131,6 +8421,7 @@
     "name": "노도카",
     "aliases": [
       "노도카",
+      "노도카",
       "노도카"
     ],
     "hints": {
@@ -8140,13 +8431,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SMG",
-      "bounty": "사막 철길",
+      "school": "붉은겨울",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "분홍색",
       "audioKey": "nodoka"
     },
     "terrain": {
@@ -8161,6 +8452,7 @@
     "name": "아야네(수영복)",
     "aliases": [
       "아야네(수영복)",
+      "아야네(수영복)",
       "아야네"
     ],
     "hints": {
@@ -8170,13 +8462,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "사막 철길",
+      "school": "아비도스",
       "role": "T.S",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0176"
     },
     "terrain": {
@@ -8191,6 +8483,7 @@
     "name": "시즈코(수영복)",
     "aliases": [
       "시즈코(수영복)",
+      "시즈코(수영복)",
       "시즈코"
     ],
     "hints": {
@@ -8200,13 +8493,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SG",
-      "bounty": "사막 철길",
+      "school": "백귀야행",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "갈색",
       "audioKey": "ch0180"
     },
     "terrain": {
@@ -8221,6 +8514,7 @@
     "name": "유즈(메이드)",
     "aliases": [
       "유즈(메이드)",
+      "유즈(메이드)",
       "유즈"
     ],
     "hints": {
@@ -8230,13 +8524,13 @@
       "age": "16세",
       "grade": "1학년",
       "weapon": "GL",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "탄력장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "빨간색",
       "audioKey": "ch0203"
     },
     "terrain": {
@@ -8251,6 +8545,7 @@
     "name": "미유(수영복)",
     "aliases": [
       "미유(수영복)",
+      "미유(수영복)",
       "미유"
     ],
     "hints": {
@@ -8260,13 +8555,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SR",
-      "bounty": "교실",
+      "school": "SRT",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "경장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0218"
     },
     "terrain": {
@@ -8281,6 +8576,7 @@
     "name": "사텐 루이코",
     "aliases": [
       "사텐 루이코",
+      "사텐 루이코",
       "사텐 루이코"
     ],
     "hints": {
@@ -8290,13 +8586,13 @@
       "age": "12세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "기타",
+      "school": "사쿠가와",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "특수장갑",
-      "range": 1500,
-      "hairColor": "",
+      "range": "1500",
+      "hairColor": "검은색",
       "audioKey": "ch9996"
     },
     "terrain": {
@@ -8311,6 +8607,7 @@
     "name": "키리노(수영복)",
     "aliases": [
       "키리노(수영복)",
+      "키리노(수영복)",
       "키리노"
     ],
     "hints": {
@@ -8320,13 +8617,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "HG",
-      "bounty": "고가도로",
+      "school": "발키리",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "신비",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "흰색",
       "audioKey": "ch0262"
     },
     "terrain": {
@@ -8341,6 +8638,7 @@
     "name": "아츠코(수영복)",
     "aliases": [
       "아츠코(수영복)",
+      "아츠코(수영복)",
       "아츠코"
     ],
     "hints": {
@@ -8350,13 +8648,13 @@
       "age": "15세",
       "grade": "1학년",
       "weapon": "SMG",
-      "bounty": "교실",
+      "school": "아리우스",
       "role": "힐러",
       "squadType": "스페셜",
       "attackType": "진동",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "보라색",
       "audioKey": "ch0267"
     },
     "terrain": {
@@ -8371,6 +8669,7 @@
     "name": "카린(교복)",
     "aliases": [
       "카린(교복)",
+      "카린(교복)",
       "카린"
     ],
     "hints": {
@@ -8380,13 +8679,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "SR",
-      "bounty": "교실",
+      "school": "밀레니엄",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "폭발",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0282"
     },
     "terrain": {
@@ -8401,6 +8700,7 @@
     "name": "이치카(수영복)",
     "aliases": [
       "이치카(수영복)",
+      "이치카(수영복)",
       "이치카"
     ],
     "hints": {
@@ -8410,13 +8710,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "사막 철길",
+      "school": "트리니티",
       "role": "서포터",
       "squadType": "스페셜",
       "attackType": "진동",
       "defenseType": "특수장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0292"
     },
     "terrain": {
@@ -8431,6 +8731,7 @@
     "name": "치아키(수영복)",
     "aliases": [
       "치아키(수영복)",
+      "치아키(수영복)",
       "치아키"
     ],
     "hints": {
@@ -8440,13 +8741,13 @@
       "age": "16세",
       "grade": "2학년",
       "weapon": "AR",
-      "bounty": "고가도로",
+      "school": "게헨나",
       "role": "딜러",
       "squadType": "스페셜",
       "attackType": "관통",
       "defenseType": "중장갑",
-      "range": 1000,
-      "hairColor": "",
+      "range": "1000",
+      "hairColor": "검은색",
       "audioKey": "ch0348"
     },
     "terrain": {
@@ -8456,12 +8757,15 @@
     },
     "imageUrl": "https://schaledb.com/images/student/portrait/26016.webp"
   }
-]
-;
+];
 
   let targetStudent = null;
   let usedHintsCount = 0; 
   let isAnswered = false;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    openHelpPage(1);
+  });
 
   function startNewGame() {
     targetStudent = studentsData[Math.floor(Math.random() * studentsData.length)];
@@ -8497,7 +8801,7 @@
     document.getElementById('hint-grade').textContent = targetStudent.hints.grade;
     document.getElementById('hint-hairColor').textContent = targetStudent.hints.hairColor || "입력필요";
     document.getElementById('hint-weapon').textContent = targetStudent.hints.weapon;
-    document.getElementById('hint-bounty').textContent = targetStudent.hints.bounty;
+    document.getElementById('hint-school').textContent = targetStudent.hints.school;
     document.getElementById('hint-role').textContent = targetStudent.hints.role;
     document.getElementById('hint-squadType').textContent = targetStudent.hints.squadType;
     document.getElementById('hint-range').textContent = targetStudent.hints.range;
@@ -8565,30 +8869,26 @@
     document.getElementById('nextQuestionBtn').style.display = 'block';
   }
 
-  // 기본 힌트 공개 (1개당 카운트 1)
-  function revealHint(element) {
+  function revealHint(element, cost) {
     if(isAnswered) return;
     const qMark = element.querySelector('.question-mark');
     const hText = element.querySelector('.hidden-text');
     if (qMark && qMark.style.display !== 'none') {
       qMark.style.display = 'none';
       hText.style.display = 'inline';
-      usedHintsCount++;
+      usedHintsCount += cost;
       updateHintCountUI();
     }
   }
 
-  // 💡 추가: 지형 힌트 전체 묶음 공개 (3개 열어도 카운트 1만 오름)
   function revealTerrainHints() {
     if (isAnswered) return;
     let newlyRevealed = false;
     
-    // 클래스가 terrain-tile인 모든 요소 순회
     document.querySelectorAll('.terrain-tile').forEach(tile => {
       const qMark = tile.querySelector('.question-mark');
       const hText = tile.querySelector('.hidden-text');
       
-      // 하나라도 닫혀있는 게 있다면 열고 newlyRevealed를 true로 만듦
       if (qMark && qMark.style.display !== 'none') {
         qMark.style.display = 'none';
         hText.style.display = 'inline';
@@ -8596,14 +8896,13 @@
       }
     });
 
-    // 셋 중 하나라도 새로 열렸다면 카운트는 딱 1번만 추가
     if (newlyRevealed) {
-      usedHintsCount++;
+      usedHintsCount += 1;
       updateHintCountUI();
     }
   }
 
-  function playAudioHint(btnElement) {
+  function playAudioHint(btnElement, cost) {
     const qMark = btnElement.querySelector('.question-mark');
     const hText = btnElement.querySelector('.hidden-text');
     const audioPlayer = btnElement.querySelector('#audio-player');
@@ -8611,7 +8910,7 @@
     if (!isAnswered && qMark.style.display !== 'none') {
       qMark.style.display = 'none';
       hText.style.display = 'inline';
-      usedHintsCount++;
+      usedHintsCount += cost;
       updateHintCountUI();
     }
 
@@ -8702,9 +9001,11 @@
   let currentHelpPage = 1;
   const totalHelpPages = 10;
 
-  function openHelpModal() {
+  function openHelpPage(pageNum, event) {
+    if(event) event.stopPropagation(); 
+    
     document.getElementById('helpModal').style.display = 'flex';
-    currentHelpPage = 1;
+    currentHelpPage = pageNum;
     updateHelpUI();
   }
 
