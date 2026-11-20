@@ -103,3 +103,26 @@ body { font-family: 'Pretendard', -apple-system, sans-serif; background-color: #
 .page-btn:hover:not(:disabled) { background: #edf2f7; }
 .page-btn:disabled { color: #cbd5e0; cursor: not-allowed; }
 .page-indicator { font-size: 14px; font-weight: bold; color: #718096; }
+
+/* =========================================
+   6. 한섭 / 일섭 서버 선택 토글
+========================================= */
+.header-left { display: flex; align-items: center; gap: 14px; }
+.server-toggle { display: flex; align-items: center; gap: 8px; }
+.server-btn {
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: bold;
+  border: 2px solid transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  background-color: #e2e8f0;
+  color: #4a5568;
+  transition: 0.2s;
+}
+.server-btn:hover:not(.active) { background-color: #cbd5e0; }
+.server-btn.active {
+  background-color: #ebf8ff;
+  color: #3182ce;
+  border-color: #3182ce;
+}

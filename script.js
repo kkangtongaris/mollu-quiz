@@ -1,13 +1,49 @@
 let targetStudent = null;
 let usedHintsCount = 0; 
 let isAnswered = false;
+let currentServer = localStorage.getItem('molluQuizServer') || 'KR';
 
 window.addEventListener('DOMContentLoaded', () => {
+  updateServerToggleUI();
   openHelpPage(1);
 });
 
+function getActiveStudents() {
+  if (currentServer === 'KR') {
+    const krList = studentsData.filter(s => s.isKr !== false);
+    return krList.length > 0 ? krList : studentsData;
+  }
+  return studentsData;
+}
+
+function setServer(server) {
+  if (currentServer === server) return;
+  currentServer = server;
+  localStorage.setItem('molluQuizServer', server);
+  updateServerToggleUI();
+  startNewGame();
+}
+
+function updateServerToggleUI() {
+  const krBtn = document.getElementById('btn-server-KR');
+  const jpBtn = document.getElementById('btn-server-JP');
+  if (krBtn && jpBtn) {
+    krBtn.classList.toggle('active', currentServer === 'KR');
+    jpBtn.classList.toggle('active', currentServer === 'JP');
+  }
+}
+
+function getDynamicVersionsCount(student, activePool) {
+  const baseName = student.name.replace(/\(.*?\)/g, '').replace(/\s*-\s*.*$/, '').trim();
+  const count = activePool.filter(s => 
+    s.name.replace(/\(.*?\)/g, '').replace(/\s*-\s*.*$/, '').trim() === baseName
+  ).length;
+  return count || student.hints.versions;
+}
+
 function startNewGame() {
-  targetStudent = studentsData[Math.floor(Math.random() * studentsData.length)];
+  const activePool = getActiveStudents();
+  targetStudent = activePool[Math.floor(Math.random() * activePool.length)];
   usedHintsCount = 0;
   isAnswered = false;
   updateHintCountUI();
@@ -33,7 +69,17 @@ function startNewGame() {
     if (hText) hText.style.display = 'none';
   });
 
-  document.getElementById('hint-versions').textContent = targetStudent.hints.versions + "개";
+  const audioPlayer = document.getElementById('audio-player');
+  if (audioPlayer) {
+    audioPlayer.pause();
+    audioPlayer.removeAttribute('src');
+    if (audioPlayer.previousElementSibling) {
+      audioPlayer.previousElementSibling.textContent = '🔊 음성 재생';
+    }
+  }
+
+  const versionCount = getDynamicVersionsCount(targetStudent, activePool);
+  document.getElementById('hint-versions').textContent = versionCount + "개";
   document.getElementById('hint-height').textContent = targetStudent.hints.height;
   document.getElementById('hint-birthMonth').textContent = targetStudent.hints.birthMonth;
   document.getElementById('hint-age').textContent = targetStudent.hints.age;
@@ -177,21 +223,48 @@ function playAudioHint(btnElement, cost) {
   const hText = btnElement.querySelector('.hidden-text');
   const audioPlayer = btnElement.querySelector('#audio-player');
 
-  if (!isAnswered && qMark.style.display !== 'none') {
-    qMark.style.display = 'none';
-    hText.style.display = 'inline';
-    usedHintsCount += cost;
-    updateHintCountUI();
+  // 이미 개방된 상태에서 다시 클릭하면 음성만 재재생
+  if (qMark.style.display === 'none') {
+    if (audioPlayer.src && hText.textContent !== '타이틀콜 없음') {
+      audioPlayer.currentTime = 0;
+      audioPlayer.play().catch(() => {});
+    }
+    return;
   }
 
-  const audioKey = targetStudent.hints.audioKey; 
-  if(!audioKey) return;
+  const fallbackKey = (targetStudent.hints.audioKey || '').replace(/_\d+$/, '');
+  const audioPath = targetStudent.hints.audioPath || (fallbackKey ? `jp_${fallbackKey}/${fallbackKey}_title` : null);
 
-  const audioUrl = `https://r2.schaledb.com/voice/jp_${audioKey}/${audioKey}_title.mp3`;
-  
+  if (!audioPath) {
+    qMark.style.display = 'none';
+    hText.textContent = '타이틀콜 없음';
+    hText.style.display = 'inline';
+    return;
+  }
+
+  const audioUrl = `https://r2.schaledb.com/voice/${audioPath}.mp3`;
+
+  audioPlayer.onerror = function () {
+    qMark.style.display = 'none';
+    hText.textContent = '타이틀콜 없음';
+    hText.style.display = 'inline';
+  };
+
   audioPlayer.src = audioUrl;
   audioPlayer.currentTime = 0;
-  audioPlayer.play().catch(e => console.log("Audio play blocked or file not found."));
+  audioPlayer.play()
+    .then(() => {
+      if (qMark.style.display !== 'none') {
+        qMark.style.display = 'none';
+        hText.textContent = '🔊 음성 재생';
+        hText.style.display = 'inline';
+        if (!isAnswered) {
+          usedHintsCount += cost;
+          updateHintCountUI();
+        }
+      }
+    })
+    .catch(e => console.log('Audio play failed:', e));
 }
 
 const searchInput = document.getElementById('searchInput');
@@ -203,7 +276,7 @@ searchInput.addEventListener('input', function() {
   suggestionBox.innerHTML = '';
   if (!query) { suggestionBox.style.display = 'none'; return; }
 
-  const matchedStudents = studentsData.filter(student => student.aliases.some(alias => alias.replace(/\s/g, "").toLowerCase().includes(query)));
+  const matchedStudents = getActiveStudents().filter(student => student.aliases.some(alias => alias.replace(/\s/g, "").toLowerCase().includes(query)));
 
   if (matchedStudents.length > 0) {
     suggestionBox.style.display = 'block';

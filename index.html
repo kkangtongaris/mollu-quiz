@@ -11,7 +11,13 @@
 <div class="main-wrapper">
   <!-- 상단 헤더 -->
   <div class="header">
-    <div class="header-title">몰루 퀴즈</div>
+    <div class="header-left">
+      <div class="server-toggle" role="group" aria-label="서버 선택">
+        <button type="button" class="server-btn active" id="btn-server-KR" onclick="setServer('KR')">한섭</button>
+        <button type="button" class="server-btn" id="btn-server-JP" onclick="setServer('JP')">일섭</button>
+      </div>
+      <div class="header-title">몰루 퀴즈</div>
+    </div>
     <div class="header-buttons">
       <button onclick="openHelpPage(1)">도움말</button>
       <button class="btn-giveup" onclick="showAnswer()">정답 보기</button>
