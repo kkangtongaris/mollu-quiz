@@ -6,7 +6,7 @@
 가려진 힌트를 하나씩 열어보며 정답인 학생을 유추해 보세요.
 
 
-https://kkangtongaris.github.io/molu-quiz/
+https://kkangtongaris.github.io/mollu-quiz/
 
 
 게임 설명
