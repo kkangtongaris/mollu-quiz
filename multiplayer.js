@@ -539,3 +539,49 @@ function renderPlayerResultColumn(prefix, playerData, outcome, oldRating, newRat
 function confirmMultiResult() {
   enterMultiLobby();
 }
+
+// ==========================================
+// 실시간 접속자 및 매칭 대기 인원 표시
+// ==========================================
+let latestOnlineCount = null;
+let latestQueueCount = 0;
+
+function updateOnlineStatusDisplay() {
+  const container = document.getElementById('mainLobbyOnlineStatus');
+  if (!container || latestOnlineCount === null) return;
+
+  const queueText = latestQueueCount > 0
+    ? ` · 매칭 대기 <strong>${latestQueueCount}</strong>명`
+    : '';
+  container.innerHTML = `<span class="online-dot"></span> 현재 접속자 <strong>${latestOnlineCount}</strong>명${queueText}`;
+}
+
+function initPresenceTracking() {
+  auth.signInAnonymously()
+    .then(cred => {
+      myUid = cred.user.uid;
+      const myPresenceRef = db.ref(`presence/${myUid}`);
+
+      db.ref('.info/connected').on('value', snap => {
+        if (snap.val() === true) {
+          myPresenceRef.onDisconnect().remove();
+          myPresenceRef.set(true);
+        }
+      });
+
+      db.ref('presence').on('value', snap => {
+        latestOnlineCount = snap.exists() ? Object.keys(snap.val()).length : 1;
+        updateOnlineStatusDisplay();
+      });
+
+      db.ref('queue/KR').on('value', snap => {
+        latestQueueCount = snap.exists() ? Object.keys(snap.val()).length : 0;
+        updateOnlineStatusDisplay();
+      });
+    })
+    .catch(err => {
+      console.warn('접속자 수 표시 초기화 대기:', err.message);
+    });
+}
+
+initPresenceTracking();

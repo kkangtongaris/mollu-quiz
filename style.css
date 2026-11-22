@@ -254,3 +254,84 @@ body { font-family: 'Pretendard', -apple-system, sans-serif; background-color: #
 .tier-plat   { background-color: #faf5ff; color: #805ad5; border-color: #a855f7; }
 
 .status-name { max-width: 170px; }
+
+
+/* =========================================
+   8. 실시간 접속자 배지 및 모바일 상태바 반응형
+========================================= */
+.online-status-pill {
+  margin-top: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background-color: #ffffff;
+  border: 1.5px solid #d6bcfa;
+  font-size: 13px;
+  color: #553c9a;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.online-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #38a169;
+  box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.25);
+}
+
+.status-player-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .multi-status-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px 10px;
+    padding: 10px 12px;
+  }
+  .status-timer-box {
+    grid-column: 1 / -1;
+    order: -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1.5px solid #edf2f7;
+    padding: 0 0 8px 0;
+  }
+  .timer-label { font-size: 12px; }
+  .timer-value { font-size: 18px; }
+
+  .status-player {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+  }
+  .status-player-top {
+    max-width: 100%;
+  }
+  .opp-status {
+    align-items: flex-end;
+    text-align: right;
+  }
+  .opp-status .status-player-top {
+    flex-direction: row-reverse;
+  }
+  .status-name {
+    font-size: 13px;
+    max-width: none;
+    flex: 1;
+    min-width: 0;
+  }
+  .status-hints {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+}

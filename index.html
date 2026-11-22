@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>몰루 퀴즈</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
@@ -29,6 +29,9 @@
           <div class="mode-badge mode-badge-multi">1 vs 1</div>
           <div class="mode-title">1 vs 1 대전</div>
           <div class="mode-desc">실시간 랜덤 매칭 (한섭 기준)<br>더 적은 힌트로 빠르게 맞히세요!</div>
+          <div class="online-status-pill" id="mainLobbyOnlineStatus">
+            <span class="online-dot"></span> 현재 접속자 <strong id="onlineUserCount">-</strong>명
+          </div>
         </button>
       </div>
     </div>
@@ -103,8 +106,10 @@
     <!-- 1 vs 1 실시간 상태바 (헤더와 게임 패널 사이) -->
     <div id="multiStatusBar" class="multi-status-bar" style="display: none;">
       <div class="status-player my-status">
-        <span class="status-badge me">나</span>
-        <span class="status-name" id="statusMyName">나</span>
+        <div class="status-player-top">
+          <span class="status-badge me">나</span>
+          <span class="status-name" id="statusMyName">나</span>
+        </div>
         <span class="status-hints" id="statusMyHints">힌트 0개</span>
       </div>
 
@@ -114,8 +119,10 @@
       </div>
 
       <div class="status-player opp-status">
-        <span class="status-badge opp">상대</span>
-        <span class="status-name" id="statusOppName">상대방</span>
+        <div class="status-player-top">
+          <span class="status-badge opp">상대</span>
+          <span class="status-name" id="statusOppName">상대방</span>
+        </div>
         <span class="status-hints" id="statusOppHints">힌트 0개</span>
       </div>
     </div>
@@ -356,8 +363,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
-<script src="data.js"></script>
-<script src="script.js"></script>
-<script src="multiplayer.js"></script>
+<script src="data.js?v=3"></script>
+<script src="script.js?v=3"></script>
+<script src="multiplayer.js?v=3"></script>
 </body>
 </html>
