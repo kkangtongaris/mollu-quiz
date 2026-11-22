@@ -2,22 +2,64 @@ let targetStudent = null;
 let usedHintsCount = 0; 
 let isAnswered = false;
 let currentServer = localStorage.getItem('molluQuizServer') || 'KR';
+let isMultiplayerMode = false;
 
 window.addEventListener('DOMContentLoaded', () => {
   updateServerToggleUI();
-  openHelpPage(1);
+  showScreen('mainLobbyScreen');
 });
 
+function showScreen(screenId) {
+  const screens = ['mainLobbyScreen', 'multiLobbyScreen', 'matchingScreen', 'gameScreen', 'multiResultScreen'];
+  screens.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = (id === screenId) ? 'flex' : 'none';
+  });
+}
+
+function goToMainLobby() {
+  if (typeof cleanupMultiplayerSession === 'function') {
+    cleanupMultiplayerSession();
+  }
+  isMultiplayerMode = false;
+  showScreen('mainLobbyScreen');
+}
+
+function enterChallengeMode() {
+  isMultiplayerMode = false;
+  document.getElementById('serverToggleGroup').style.display = 'flex';
+  document.getElementById('multiStatusBar').style.display = 'none';
+  showScreen('gameScreen');
+  startNewGame();
+}
+
+function handleBackToLobbyFromGame() {
+  if (isMultiplayerMode) {
+    if (confirm('대전 중에 나가면 기권(패배) 처리됩니다. 로비로 나가시겠습니까?')) {
+      if (typeof forfeitMultiplayerGame === 'function') {
+        forfeitMultiplayerGame();
+      }
+      goToMainLobby();
+    }
+  } else {
+    goToMainLobby();
+  }
+}
+
+function getKrStudentsPool() {
+  const krList = studentsData.filter(s => s.isKr !== false);
+  return krList.length > 0 ? krList : studentsData;
+}
+
 function getActiveStudents() {
-  if (currentServer === 'KR') {
-    const krList = studentsData.filter(s => s.isKr !== false);
-    return krList.length > 0 ? krList : studentsData;
+  if (isMultiplayerMode || currentServer === 'KR') {
+    return getKrStudentsPool();
   }
   return studentsData;
 }
 
 function setServer(server) {
-  if (currentServer === server) return;
+  if (isMultiplayerMode || currentServer === server) return;
   currentServer = server;
   localStorage.setItem('molluQuizServer', server);
   updateServerToggleUI();
@@ -48,9 +90,8 @@ function getDynamicVersionsCount(student, activePool) {
   return uniqueVariants.size || student.hints.versions;
 }
 
-function startNewGame() {
-  const activePool = getActiveStudents();
-  targetStudent = activePool[Math.floor(Math.random() * activePool.length)];
+function setupBoardForStudent(student, activePool) {
+  targetStudent = student;
   usedHintsCount = 0;
   isAnswered = false;
   updateHintCountUI();
@@ -91,10 +132,7 @@ function startNewGame() {
   document.getElementById('hint-birthMonth').textContent = targetStudent.hints.birthMonth;
   document.getElementById('hint-age').textContent = targetStudent.hints.age;
   document.getElementById('hint-grade').textContent = targetStudent.hints.grade;
-  
-  // 머리색 텍스트 폰트 컬러 적용
   document.getElementById('hint-hairColor').innerHTML = getColoredHairColorHTML(targetStudent.hints.hairColor);
-  
   document.getElementById('hint-weapon').textContent = targetStudent.hints.weapon;
   document.getElementById('hint-school').textContent = targetStudent.hints.school;
   document.getElementById('hint-role').textContent = targetStudent.hints.role;
@@ -109,28 +147,24 @@ function startNewGame() {
   applyTypeColor('hint-defenseType', targetStudent.hints.defenseType);
 }
 
+function startNewGame() {
+  if (isMultiplayerMode) return;
+  const activePool = getActiveStudents();
+  const picked = activePool[Math.floor(Math.random() * activePool.length)];
+  setupBoardForStudent(picked, activePool);
+}
+
 function getColoredHairColorHTML(colorString) {
   if (!colorString || colorString === "입력필요") return "입력필요";
-  
   const colorMap = {
-    "빨간색": "#e53e3e",
-    "분홍색": "#f687b3",
-    "회색": "#a0aec0",
-    "흰색": "#ffffff", 
-    "주황색": "#ed8936",
-    "검은색": "#2d3748",
-    "파란색": "#3182ce",
-    "갈색": "#975a16",
-    "노란색": "#ecc94b",
-    "보라색": "#9f7aea",
-    "하늘색": "#63b3ed",
-    "초록색": "#48bb78"
+    "빨간색": "#e53e3e", "분홍색": "#f687b3", "회색": "#a0aec0", "흰색": "#ffffff",
+    "주황색": "#ed8936", "검은색": "#2d3748", "파란색": "#3182ce", "갈색": "#975a16",
+    "노란색": "#ecc94b", "보라색": "#9f7aea", "하늘색": "#63b3ed", "초록색": "#48bb78"
   };
-
   const colorCode = colorMap[colorString];
   if (colorCode) {
     if (colorString === "흰색") {
-       return `<span style="color: #ffffff; text-shadow: -1px -1px 0 #cbd5e0, 1px -1px 0 #cbd5e0, -1px 1px 0 #cbd5e0, 1px 1px 0 #cbd5e0;">${colorString}</span>`;
+      return `<span style="color: #ffffff; text-shadow: -1px -1px 0 #cbd5e0, 1px -1px 0 #cbd5e0, -1px 1px 0 #cbd5e0, 1px 1px 0 #cbd5e0;">${colorString}</span>`;
     }
     return `<span style="color: ${colorCode};">${colorString}</span>`;
   }
@@ -144,8 +178,8 @@ function getTerrainImg(rankString) {
     const rankToNum = { "D": 0, "C": 1, "B": 2, "A": 3, "S": 4, "SS": 5, "SSS": 6 };
     const num = rankToNum[rank];
     if (num !== undefined) {
-       const imgUrl = `https://schaledb.com/images/ui/Adaptresult${num}.png`;
-       return `<img src="${imgUrl}" onerror="this.outerHTML='<span style=\\'font-size:24px; font-weight:bold;\\'>${rank}</span>'" alt="${rank}" style="width: 45px; vertical-align: middle;">`;
+      const imgUrl = `https://schaledb.com/images/ui/Adaptresult${num}.png`;
+      return `<img src="${imgUrl}" onerror="this.outerHTML='<span style=\\'font-size:24px; font-weight:bold;\\'>${rank}</span>'" alt="${rank}" style="width: 45px; vertical-align: middle;">`;
     }
     return `<span style="font-size:24px; font-weight:bold;">${rank}</span>`;
   }).join(' <span style="font-size:18px; color:#a0aec0; margin:0 4px;">/</span> ');
@@ -174,7 +208,7 @@ function updateHintCountUI() {
   document.getElementById('hintCountDisplay').textContent = `사용한 힌트: ${usedHintsCount}개`;
 }
 
-function showAnswer() {
+function showAnswer(isTimeout = false) {
   if (isAnswered) return;
   isAnswered = true;
   
@@ -186,14 +220,23 @@ function showAnswer() {
   imageBox.style.backgroundColor = "#fff";
   
   const resMsg = document.getElementById('resultMessage');
-  resMsg.innerHTML = `아쉽네요! 정답은 <span style="color:#e53e3e;">${targetStudent.name}</span> 입니다.`;
-  resMsg.style.display = 'block';
-
-  document.getElementById('nextQuestionBtn').style.display = 'block';
+  if (isMultiplayerMode) {
+    resMsg.innerHTML = isTimeout
+      ? `시간 초과! 정답은 <span style="color:#e53e3e;">${targetStudent.name}</span> 입니다.<br><span style="font-size:14px; color:#718096;">상대방의 풀이가 끝날 때까지 잠시 기다려주세요...</span>`
+      : `포기했습니다! 정답은 <span style="color:#e53e3e;">${targetStudent.name}</span> 입니다.<br><span style="font-size:14px; color:#718096;">상대방의 풀이가 끝날 때까지 잠시 기다려주세요...</span>`;
+    resMsg.style.display = 'block';
+    if (typeof onMultiplayerGiveUp === 'function') {
+      onMultiplayerGiveUp(isTimeout);
+    }
+  } else {
+    resMsg.innerHTML = `아쉽네요! 정답은 <span style="color:#e53e3e;">${targetStudent.name}</span> 입니다.`;
+    resMsg.style.display = 'block';
+    document.getElementById('nextQuestionBtn').style.display = 'block';
+  }
 }
 
 function revealHint(element, cost) {
-  if(isAnswered) return;
+  if (isAnswered) return;
   const qMark = element.querySelector('.question-mark');
   const hText = element.querySelector('.hidden-text');
   if (qMark && qMark.style.display !== 'none') {
@@ -201,6 +244,12 @@ function revealHint(element, cost) {
     hText.style.display = 'inline';
     usedHintsCount += cost;
     updateHintCountUI();
+
+    if (isMultiplayerMode && typeof onMultiplayerHintRevealed === 'function') {
+      const labelEl = element.querySelector('.hint-label');
+      const hintName = labelEl && labelEl.childNodes[0] ? labelEl.childNodes[0].textContent.trim() : '힌트';
+      onMultiplayerHintRevealed(hintName, usedHintsCount);
+    }
   }
 }
 
@@ -211,7 +260,6 @@ function revealTerrainHints() {
   document.querySelectorAll('.terrain-tile').forEach(tile => {
     const qMark = tile.querySelector('.question-mark');
     const hText = tile.querySelector('.hidden-text');
-    
     if (qMark && qMark.style.display !== 'none') {
       qMark.style.display = 'none';
       hText.style.display = 'inline';
@@ -222,6 +270,9 @@ function revealTerrainHints() {
   if (newlyRevealed) {
     usedHintsCount += 1;
     updateHintCountUI();
+    if (isMultiplayerMode && typeof onMultiplayerHintRevealed === 'function') {
+      onMultiplayerHintRevealed('지형 적성', usedHintsCount);
+    }
   }
 }
 
@@ -230,7 +281,6 @@ function playAudioHint(btnElement, cost) {
   const hText = btnElement.querySelector('.hidden-text');
   const audioPlayer = btnElement.querySelector('#audio-player');
 
-  // 이미 개방된 상태에서 다시 클릭하면 음성만 재재생
   if (qMark.style.display === 'none') {
     if (audioPlayer.src && hText.textContent !== '타이틀콜 없음') {
       audioPlayer.currentTime = 0;
@@ -268,6 +318,9 @@ function playAudioHint(btnElement, cost) {
         if (!isAnswered) {
           usedHintsCount += cost;
           updateHintCountUI();
+          if (isMultiplayerMode && typeof onMultiplayerHintRevealed === 'function') {
+            onMultiplayerHintRevealed('타이틀콜(일음)', usedHintsCount);
+          }
         }
       }
     })
@@ -278,12 +331,14 @@ const searchInput = document.getElementById('searchInput');
 const suggestionBox = document.getElementById('suggestionBox');
 
 searchInput.addEventListener('input', function() {
-  if(isAnswered) return;
+  if (isAnswered) return;
   const query = this.value.replace(/\s/g, "").toLowerCase();
   suggestionBox.innerHTML = '';
   if (!query) { suggestionBox.style.display = 'none'; return; }
 
-  const matchedStudents = getActiveStudents().filter(student => student.aliases.some(alias => alias.replace(/\s/g, "").toLowerCase().includes(query)));
+  const matchedStudents = getActiveStudents().filter(student =>
+    student.aliases.some(alias => alias.replace(/\s/g, "").toLowerCase().includes(query))
+  );
 
   if (matchedStudents.length > 0) {
     suggestionBox.style.display = 'block';
@@ -317,18 +372,25 @@ searchInput.addEventListener('keydown', function(e) {
       imageBox.innerHTML = `<img src="${targetStudent.imageUrl}" alt="정답 이미지">`;
       imageBox.style.backgroundColor = "#fff";
       
-      let rankClass = "";
-      let rankName = "";
-      if (usedHintsCount <= 7) { rankClass = "rank-plat"; rankName = "플래티넘"; }
-      else if (usedHintsCount <= 10) { rankClass = "rank-gold"; rankName = "골드"; }
-      else if (usedHintsCount <= 15) { rankClass = "rank-silver"; rankName = "실버"; }
-      else { rankClass = "rank-bronze"; rankName = "브론즈"; }
-
       const resMsg = document.getElementById('resultMessage');
-      resMsg.innerHTML = `정답입니다!<br>당신의 등급: <span class="${rankClass}">${rankName}</span>`;
-      resMsg.style.display = 'block';
+      if (isMultiplayerMode) {
+        resMsg.innerHTML = `정답입니다! (소모 힌트: ${usedHintsCount}개)<br><span style="font-size:14px; color:#718096;">상대방의 풀이가 끝날 때까지 잠시 기다려주세요...</span>`;
+        resMsg.style.display = 'block';
+        if (typeof onMultiplayerSolved === 'function') {
+          onMultiplayerSolved(usedHintsCount);
+        }
+      } else {
+        let rankClass = "";
+        let rankName = "";
+        if (usedHintsCount <= 7) { rankClass = "rank-plat"; rankName = "플래티넘"; }
+        else if (usedHintsCount <= 10) { rankClass = "rank-gold"; rankName = "골드"; }
+        else if (usedHintsCount <= 15) { rankClass = "rank-silver"; rankName = "실버"; }
+        else { rankClass = "rank-bronze"; rankName = "브론즈"; }
 
-      document.getElementById('nextQuestionBtn').style.display = 'block';
+        resMsg.innerHTML = `정답입니다!<br>당신의 등급: <span class="${rankClass}">${rankName}</span>`;
+        resMsg.style.display = 'block';
+        document.getElementById('nextQuestionBtn').style.display = 'block';
+      }
     } else {
       usedHintsCount++;
       updateHintCountUI();
@@ -339,6 +401,10 @@ searchInput.addEventListener('keydown', function(e) {
       badge.className = 'wrong-badge';
       badge.textContent = userAnswer;
       wrongList.appendChild(badge);
+
+      if (isMultiplayerMode && typeof onMultiplayerWrongAnswer === 'function') {
+        onMultiplayerWrongAnswer(userAnswer, usedHintsCount);
+      }
 
       this.value = '';
     }
@@ -352,8 +418,7 @@ let currentHelpPage = 1;
 const totalHelpPages = 10;
 
 function openHelpPage(pageNum, event) {
-  if(event) event.stopPropagation(); 
-  
+  if (event) event.stopPropagation(); 
   document.getElementById('helpModal').style.display = 'flex';
   currentHelpPage = pageNum;
   updateHelpUI();
@@ -386,10 +451,4 @@ function updateHelpUI() {
   document.getElementById('pageIndicator').textContent = `${currentHelpPage} / ${totalHelpPages}`;
   document.getElementById('prevPageBtn').disabled = (currentHelpPage === 1);
   document.getElementById('nextPageBtn').disabled = (currentHelpPage === totalHelpPages);
-}
-
-if (studentsData.length > 5) {
-    startNewGame();
-} else {
-    alert("코드 내부에 'studentsData' 부분에 데이터 스크립트로 추출한 JSON 데이터를 붙여넣어 주세요!");
 }
