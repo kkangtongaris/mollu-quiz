@@ -4881,7 +4881,7 @@ const studentsData = [
       "indoor": "D"
     },
     "imageUrl": "https://schaledb.com/images/student/portrait/10148.webp",
-    "isKr": false
+    "isKr": true
   },
   {
     "id": 10149,
@@ -8247,7 +8247,7 @@ const studentsData = [
       "indoor": "D"
     },
     "imageUrl": "https://schaledb.com/images/student/portrait/20060.webp",
-    "isKr": false
+    "isKr": true
   },
   {
     "id": 20061,

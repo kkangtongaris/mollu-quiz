@@ -34,11 +34,18 @@ function updateServerToggleUI() {
 }
 
 function getDynamicVersionsCount(student, activePool) {
-  const baseName = student.name.replace(/\(.*?\)/g, '').replace(/\s*-\s*.*$/, '').trim();
-  const count = activePool.filter(s => 
-    s.name.replace(/\(.*?\)/g, '').replace(/\s*-\s*.*$/, '').trim() === baseName
-  ).length;
-  return count || student.hints.versions;
+  const getBase = (name) => name.replace(/\(.*?\)/g, '').replace(/\s*-\s*.*$/, '').trim();
+  const getVariantKey = (name) => name.replace(/\s*-\s*.*$/, '').trim();
+  const targetBase = getBase(student.name);
+  const uniqueVariants = new Set();
+
+  activePool.forEach(s => {
+    if (getBase(s.name) === targetBase) {
+      uniqueVariants.add(getVariantKey(s.name));
+    }
+  });
+
+  return uniqueVariants.size || student.hints.versions;
 }
 
 function startNewGame() {
